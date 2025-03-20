@@ -39,16 +39,16 @@ public class LoginController {
     public String confirmUsername(@RequestParam("username") @Nullable String username, @RequestParam("password") @Nullable String password, RedirectAttributes redirectAttributes, HttpSession session) {
         if(username == null || username.isEmpty()) {
             redirectAttributes.addFlashAttribute("usernameError", "Username is required");
-            return "redirect:/password-changing";
+            return "redirect:/change-password";
         }
         List<User> currUser = userService.findByUsername(username);
         if(currUser == null || currUser.isEmpty()) {
             redirectAttributes.addFlashAttribute("usernameError", "Incorrect username. Please provide a correct username");
-            return "redirect:/password-changing";
+            return "redirect:/change-password";
         }
         if(password == null || password.isEmpty()) {
             redirectAttributes.addFlashAttribute("passwordError", "Password is required");
-            return "redirect:/password-changing";
+            return "redirect:/change-password";
         }
         User user = currUser.get(0);
         String hashPassword = passwordEncoder.encode(password);

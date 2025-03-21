@@ -18,7 +18,16 @@
   - [x] Creation du model mapping pour les Leads
   - [x] Controller pour le leadMapping
   - [x] Service lead Mapping
-- [ ] generer donnee csv pour lead
+- [x] generer donnee csv pour lead
   - [x] cree un customer
   - [x] enumerer la liste des lead status
-- [ ] Test d'excecution de la recuperation du fichier
+  - [x] gestion de la reponse avec ImportBody
+  - [x] implementation de ImportBody dans le processus d'import
+  - [x] transfer d'une CsvMapping vers un Model entity
+  - [x] adapter transfer pour LeadMapping
+  - [x] traitement des lignes pour lead.csv
+  - [x] recuperation des erreurs de donnee
+  - [x] redirection en cas d'erreur
+- [x] Test d'excecution de la recuperation du fichier
+  - [x] Reussir une importation de leads
+  - [x] Afficher la liste des erreurs d'importations

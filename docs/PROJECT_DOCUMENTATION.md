@@ -30,3 +30,22 @@ Les méthodes génériques incluent :
 - **Gestion des erreurs et exceptions** : Méthodes centralisées pour le traitement des erreurs.
 - **Validations** : Vérifications communes des entrées utilisateur avant de passer à la logique business.
 - **Utilitaires** : Fonctions communes pour le formatage et le parsing des données.
+
+## BindingResult
+
+The `BindingResult` object is used to store the results of binding a request to a model object. It provides information about any errors that occurred during the binding process.
+
+## Usage
+
+In the `LeadController` class, the `BindingResult` object is used to validate the `Lead` object before creating or updating it. If any errors occur during the binding process, the `BindingResult` object will contain information about those errors.
+
+For example, in the `createLead` method:
+```java
+@PostMapping("/create")
+public String createLead(@ModelAttribute("lead") @Validated Lead lead, BindingResult bindingResult, Authentication authentication, Model model) {
+    if (bindingResult.hasErrors()) {
+        // handle errors
+    } else {
+        // create lead
+    }
+}

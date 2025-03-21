@@ -11,10 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.extern.slf4j.Slf4j;
+import site.easy.to.build.crm.entity.imp.CsvMapping;
 
 @Service
 @Slf4j
-public class CSVService<T> {
+public class CSVService<T extends CsvMapping> {
     public List<T> parseCSV(MultipartFile file,Class<T> clazz,char separator){
         try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             CsvToBean<T> csvToBean = new CsvToBeanBuilder<T>(reader)

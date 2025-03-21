@@ -1,0 +1,3 @@
+customer_id,user_id,name,phone,employee_id,status,created_at
+43,58,Lead 1,+33612345678,58,"archived",2024-07-07
+43,58,Lead 2,+33612345678,58,"assign-to-sales",2024-07-07

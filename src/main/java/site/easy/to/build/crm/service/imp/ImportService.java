@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import lombok.Getter;
 import site.easy.to.build.crm.entity.imp.CsvMapping;
-import site.easy.to.build.crm.exception.AdminImportException;
 
 
 @Service
@@ -16,5 +15,5 @@ public abstract class ImportService {
     public ImportService(Class<? extends CsvMapping> mapping){
         this.mapping = mapping;
     }
-    abstract protected void importData(List<? extends CsvMapping> data,AdminImportException importException);
+    abstract protected void importData(List<? extends CsvMapping> data,ImportBody importBody);
 }

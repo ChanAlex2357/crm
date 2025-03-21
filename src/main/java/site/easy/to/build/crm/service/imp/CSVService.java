@@ -15,17 +15,15 @@ import site.easy.to.build.crm.entity.imp.CsvMapping;
 
 @Service
 @Slf4j
-public class CSVService<T extends CsvMapping> {
-    public List<T> parseCSV(MultipartFile file, Class<? extends T> type, char separator){
+public class CSVService {
+    public List<CsvMapping> parseCSV(MultipartFile file, Class<? extends CsvMapping> clazz, char separator){
         try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
-            CsvToBean<T> csvToBean = new CsvToBeanBuilder<T>(reader)
-                .withType(type)
-                .withIgnoreLeadingWhiteSpace(true)
-                .withIgnoreEmptyLine(true)
+            CsvToBean<CsvMapping> csvToBean = new CsvToBeanBuilder<CsvMapping>(reader)
+                .withType(clazz)
                 .withSeparator(separator)
                 .build();
             
-            List<T> csvRecords = csvToBean.parse();
+            List<CsvMapping> csvRecords = csvToBean.parse();
             return csvRecords;
         } catch (IOException e) {
             log.error("Error parsing CSV file", e);

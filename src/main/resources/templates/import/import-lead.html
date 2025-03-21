@@ -71,7 +71,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title" th:text="'Import '+${importData.modelName}"></h4>
-                            <form th:object="${importData}" th:action="@{/import}" enctype="multipart/form-data" method="post">
+                            <form th:object="${importData}" th:action="@{/import/lead}" enctype="multipart/form-data" method="post">
                                 <label class="m-t-20" for="file">File:</label>
                                 <div class="input-group">
                                     <input type="file" id="file" th:field="*{file}" class="form-control">

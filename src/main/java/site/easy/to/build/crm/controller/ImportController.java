@@ -1,5 +1,6 @@
 package site.easy.to.build.crm.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,12 @@ import site.easy.to.build.crm.service.lead.LeadImportService;
 @Controller
 public class ImportController {
     
+    @Autowired
+    LeadImportService leadImportService = new LeadImportService();
+
+    @Autowired
+    AdminImportService importService = new AdminImportService();
+
     @GetMapping("/import/{base}")
     public String importForm(Model model,@PathVariable("base") String base) {
         if(base == null) {
@@ -31,8 +38,7 @@ public class ImportController {
     public String handleImport(@ModelAttribute ImportData importForm, Model model) {
         try {
             MultipartFile file = importForm.getFile();
-            AdminImportService<LeadMapping> importService = new AdminImportService<>();
-            importService.importData(file,new LeadImportService(),';');
+            importService.importData(file, leadImportService, ',');
         } catch (AdminImportException e) {
             model.addAttribute("errors", e);
             return "import/lead";

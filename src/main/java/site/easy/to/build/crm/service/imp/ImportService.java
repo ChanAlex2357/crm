@@ -11,10 +11,10 @@ import site.easy.to.build.crm.exception.AdminImportException;
 
 @Service
 @Getter
-public abstract class ImportService<T extends CsvMapping> {
-    Class<? extends T> mapping;
-    public ImportService(Class<? extends T> mapping){
+public abstract class ImportService {
+    Class<? extends CsvMapping> mapping;
+    public ImportService(Class<? extends CsvMapping> mapping){
         this.mapping = mapping;
     }
-    abstract protected void importData(List<T> data,AdminImportException importException);
+    abstract protected void importData(List<? extends CsvMapping> data,AdminImportException importException);
 }

@@ -1,10 +1,10 @@
 package site.easy.to.build.crm.entity.imp;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 import com.opencsv.bean.CsvBindByName;
-
 import lombok.Getter;
+import site.easy.to.build.crm.entity.Lead;
 
 @Getter
 public class LeadMapping extends CsvMapping{
@@ -51,11 +51,32 @@ public class LeadMapping extends CsvMapping{
     private String meetingId;
 
     @CsvBindByName(column = "google_drive")
-    private int googleDrive;
+    private char googleDrive;
 
     @CsvBindByName(column = "google_drive_folder_id")
     private String googleDriveFolderId;
 
     @CsvBindByName(column = "created_at")
-    private Date  createdAt;
+    private LocalDateTime  createdAt;
+
+
+    @Override
+    public Lead transfer() {
+        Lead lead = new Lead(
+            getName(),
+            getStatus(),
+            getPhone(),
+            getMeetingId(),
+            getGoogleDrive() == '1' ? Boolean.TRUE : Boolean.FALSE,
+            getGoogleDriveFolderId(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            getCreatedAt()
+        );
+        return lead;
+    }
 }

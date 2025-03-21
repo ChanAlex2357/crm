@@ -162,8 +162,7 @@
                         <span class="hide-menu">Import</span>
                     </a>
                     <ul th:if="${#authorization.expression('hasRole(''ROLE_MANAGER'')')}" class="collapse">
-                        <li><a th:href="${home + 'manager/all-users'}">All user</a></li>
-                        <li><a th:href="${home + 'manager/register-user'}">Create user</a></li>
+                        <li><a th:href="${home + 'import'}">Import lead</a></li>
                     </ul>
                 </li>
             </ul>

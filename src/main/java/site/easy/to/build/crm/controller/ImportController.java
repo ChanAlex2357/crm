@@ -43,6 +43,6 @@ public class ImportController {
             model.addAttribute("errors", e);
             return "import/lead";
         }
-        return "redirect:/";
+        return "redirect:/employee/lead/assigned-leads";
     }
 }

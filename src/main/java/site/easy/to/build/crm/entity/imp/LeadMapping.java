@@ -1,5 +1,5 @@
 package site.easy.to.build.crm.entity.imp;
 
-public class CsvMapping {
+public class LeadMapping extends CsvMapping{
     
 }

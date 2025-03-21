@@ -1,4 +1,4 @@
-package site.easy.to.build.crm.entity.importdata;
+package site.easy.to.build.crm.entity.imp;
 
 import org.springframework.web.multipart.MultipartFile;
 import lombok.Data;

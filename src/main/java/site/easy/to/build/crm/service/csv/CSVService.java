@@ -1,4 +1,4 @@
-package site.easy.to.build.crm.service.imp;
+package site.easy.to.build.crm.service.csv;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,25 +11,28 @@ import org.springframework.web.multipart.MultipartFile;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.extern.slf4j.Slf4j;
-import site.easy.to.build.crm.entity.imp.CsvMapping;
+import site.easy.to.build.crm.entity.csv.CsvMapping;
 
 @Service
 @Slf4j
-public class CSVService<T extends CsvMapping> {
-    public List<T> parseCSV(MultipartFile file, Class<? extends T> type, char separator){
+public class CSVService {
+    public List<CsvMapping> parseCSV(MultipartFile file, Class<? extends CsvMapping> clazz, char separator){
         try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
-            CsvToBean<T> csvToBean = new CsvToBeanBuilder<T>(reader)
-                .withType(type)
+            CsvToBean<CsvMapping> csvToBean = new CsvToBeanBuilder<CsvMapping>(reader)
+                .withType(clazz)
+                .withSeparator(separator)
                 .withIgnoreLeadingWhiteSpace(true)
                 .withIgnoreEmptyLine(true)
-                .withSeparator(separator)
                 .build();
             
-            List<T> csvRecords = csvToBean.parse();
+            List<CsvMapping> csvRecords = csvToBean.parse();
             return csvRecords;
         } catch (IOException e) {
             log.error("Error parsing CSV file", e);
             throw new RuntimeException("Failed to process CSV file: " + e.getMessage());
         }
+    }
+    public List<CsvMapping> parseCSV(MultipartFile file, Class<? extends CsvMapping> clazz){
+        return parseCSV(file, clazz, ',');
     }
 }

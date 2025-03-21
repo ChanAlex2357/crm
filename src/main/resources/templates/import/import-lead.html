@@ -71,7 +71,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title" th:text="'Import '+${importData.modelName}"></h4>
-                            <form th:object="${importData}" th:action="@{/import}" enctype="multipart/form-data" method="post">
+                            <form th:object="${importData}" th:action="@{/import/lead}" enctype="multipart/form-data" method="post">
                                 <label class="m-t-20" for="file">File:</label>
                                 <div class="input-group">
                                     <input type="file" id="file" th:field="*{file}" class="form-control">
@@ -85,33 +85,19 @@
                     </div>
                 </div>
             </div>
-            <div th:if="${hasGoogleDriveAccess}" class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLongTitle">Create New Google Drive Folder</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <form method="post">
-                                <input type="hidden" id="id" name="id" class="form-control">
-                                <label for="folderName" class="m-t-20">Folder Name</label>
-                                <div class="input-group">
-                                    <input id="folderName" class="form-control">
-                                </div>
-                                <div class="input-group m-t-10">
-                                    <span id="emailErrors" class="text-danger font-weight-bold"></span>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="create" >Create</button>
-                        </div>
-                    </div>
-                </div>
+            <div th:if="${errors != null}" class="">
+                <h3>Erreurs d'importation</h3>
+                <table class="table">
+                    <thead>
+                    </thead>
+                    <tbody>
+                        <tr th:each="error : ${errors.getErrors()}">
+                            <td class="alert alert-danger mb-3">
+                                <span class="error-message" th:utext="${error.message}"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
             <!-- ============================================================== -->

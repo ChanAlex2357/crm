@@ -27,6 +27,9 @@ public class AdminImportException extends RuntimeException {
     public void addError(ImportException error) {
         errors.add(error);
     }
+    public void addError(String message , int line) {
+        addError(new ImportException(message, line));
+    }
 
     public boolean hasErrors() {
         return errors != null && !getErrors().isEmpty();

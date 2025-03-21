@@ -71,16 +71,15 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Import data</h4>
-                            <form th:object="${lead}" th:action="@{/import}" enctype="multipart/form-data" method="post">
-                                <input type="" id="allFiles" name="allFiles">
-                                <label class="m-t-20" for="name">Name:</label>
+                            <form th:object="${importData}" th:action="@{/import}" enctype="multipart/form-data" method="post">
+                                <label class="m-t-20" for="file">File:</label>
                                 <div class="input-group">
-                                    <input type="text" id="name" th:field="*{name}" class="form-control">
+                                    <input type="file" id="file" th:field="*{file}" class="form-control">
                                 </div>
                                 <div class="input-group">
-                                    <span class="text-danger font-weight-bold" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                                    <span class="text-danger font-weight-bold" th:if="${#fields.hasErrors('file')}" th:errors="*{file}"></span>
                                 </div>
-                                <button type="submit" class="btn btn-primary m-t-20">Create Lead</button>
+                                <button type="submit" class="btn btn-primary m-t-20">Import data</button>
                             </form>
                         </div>
                     </div>

@@ -17,11 +17,12 @@ public class AdminImportService {
         this.csvService = new CSVService();
     }
     public void importData(MultipartFile file, ImportService importService,char separator){
-        AdminImportException importException = new AdminImportException();
+        ImportBody importBody = new ImportBody();
         List<CsvMapping> data = csvService.parseCSV(file, importService.getMapping(), separator);
-        importService.importData(data,importException);
-        if (importException.hasErrors()) {
-            throw importException;
+        importService.importData(data,importBody);
+        if (importBody.getImportException().hasErrors()) {
+            throw importBody.getImportException();
         }
+
     }
 }

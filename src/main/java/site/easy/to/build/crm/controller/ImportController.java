@@ -2,7 +2,6 @@ package site.easy.to.build.crm.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +9,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import site.easy.to.build.crm.entity.imp.ImportData;
+import site.easy.to.build.crm.entity.imp.LeadMapping;
+import site.easy.to.build.crm.exception.AdminImportException;
 import site.easy.to.build.crm.service.imp.AdminImportService;
+import site.easy.to.build.crm.service.lead.LeadImportService;
 
 @Controller
 public class ImportController {
@@ -25,21 +27,16 @@ public class ImportController {
 
     }
 
-    @PostMapping("/import")
-    public String handleImport(@ModelAttribute ImportData importForm, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
-            return "import/import-lead";
-        }
-
+    @PostMapping("/import/lead")
+    public String handleImport(@ModelAttribute ImportData importForm, Model model) {
         try {
-            
-        } catch (Exception e) {
-            // TODO: handle exception
+            MultipartFile file = importForm.getFile();
+            AdminImportService<LeadMapping> importService = new AdminImportService<>();
+            importService.importData(file,new LeadImportService(),';');
+        } catch (AdminImportException e) {
+            model.addAttribute("errors", e);
+            return "import/lead";
         }
-        AdminImportService<?> importService = new AdminImportService<>();
-        // Process the uploaded CSV file
-        MultipartFile file = importForm.getFile();
-        System.out.println(file);
         return "redirect:/";
     }
 }

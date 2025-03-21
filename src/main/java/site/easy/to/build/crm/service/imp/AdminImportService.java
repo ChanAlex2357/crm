@@ -17,7 +17,6 @@ public class AdminImportService<T extends CsvMapping> {
 
     public void importData(MultipartFile file, ImportService<T> importService,char separator){
         AdminImportException importException = new AdminImportException();
-
         List<T> data = csvService.parseCSV(file, importService.getMapping(), separator);
         importService.importData(data,importException);
         if (importException.hasErrors()) {

@@ -1,11 +1,12 @@
-package site.easy.to.build.crm.service.imp;
+package site.easy.to.build.crm.service.csv.general;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import lombok.Getter;
-import site.easy.to.build.crm.entity.imp.CsvMapping;
+import site.easy.to.build.crm.entity.csv.CsvMapping;
+import site.easy.to.build.crm.entity.csv.ImportBody;
 
 
 @Service

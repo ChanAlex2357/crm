@@ -1,10 +1,13 @@
-package site.easy.to.build.crm.entity.imp;
+package site.easy.to.build.crm.entity.csv.mapping;
 
 import java.time.LocalDateTime;
 
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvDate;
+
 import lombok.Getter;
 import site.easy.to.build.crm.entity.Lead;
+import site.easy.to.build.crm.entity.csv.CsvMapping;
 
 @Getter
 public class LeadMapping extends CsvMapping{
@@ -57,6 +60,7 @@ public class LeadMapping extends CsvMapping{
     private String googleDriveFolderId;
 
     @CsvBindByName(column = "created_at")
+    @CsvDate("yyyy-MM-dd HH:mm:ss")
     private LocalDateTime  createdAt;
 
 

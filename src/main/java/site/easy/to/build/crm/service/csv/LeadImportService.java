@@ -1,4 +1,4 @@
-package site.easy.to.build.crm.service.lead;
+package site.easy.to.build.crm.service.csv;
 
 import java.util.List;
 
@@ -9,11 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.Lead;
 import site.easy.to.build.crm.entity.User;
-import site.easy.to.build.crm.entity.imp.CsvMapping;
-import site.easy.to.build.crm.entity.imp.LeadMapping;
+import site.easy.to.build.crm.entity.csv.CsvMapping;
+import site.easy.to.build.crm.entity.csv.ImportBody;
+import site.easy.to.build.crm.entity.csv.mapping.LeadMapping;
+import site.easy.to.build.crm.service.csv.general.ImportService;
 import site.easy.to.build.crm.service.customer.CustomerServiceImpl;
-import site.easy.to.build.crm.service.imp.ImportBody;
-import site.easy.to.build.crm.service.imp.ImportService;
 import site.easy.to.build.crm.service.user.UserServiceImpl;
 
 @Service

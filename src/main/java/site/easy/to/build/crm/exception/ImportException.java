@@ -2,10 +2,10 @@ package site.easy.to.build.crm.exception;
 
 public class ImportException extends RuntimeException {
     public ImportException(Exception source,int line) {
-        super(line+": "+source.getMessage());
+        this(source.getMessage(), line);
     }
     public ImportException(String source,int line) {
-        super(line+": "+source);
+        super("<span class=\"font-weight-bold\"> Ligne "+line+" : </span> "+source);
     }
     
 }

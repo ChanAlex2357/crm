@@ -5,4 +5,8 @@ import lombok.Data;
 @Data
 public class ImportData {
     private MultipartFile file;
+    private String modelName;
+    public ImportData(String base) {
+        setModelName(base);
+    }
 }

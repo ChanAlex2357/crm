@@ -243,6 +243,39 @@ $('#min-date').bootstrapMaterialDatePicker({ format: 'DD/MM/YYYY HH:mm', minDate
 
     /*]]>*/
 </script>
+<script>
+    document.getElementById("customerId").addEventListener("change", function() {
+      var selectedCustomerId = this.value;
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/api/customer/budget/" + encodeURIComponent(selectedCustomerId), true);
+      xhr.setRequestHeader("Accept", "application/json");
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = JSON.parse(xhr.responseText);
+            console.log(response);
+          if (xhr.status === 200) {
+            var budgets = response.data;
+            var budgetSelect = document.getElementById("budget");
+            // clear current options
+            budgetSelect.innerHTML = "";
+            // add new options from the response
+            console.log(budgets);
+            budgets.forEach(function(budget) {
+              var option = document.createElement("option");
+              option.value = budget.budgetId;
+              option.text = budget.description;
+              budgetSelect.appendChild(option);
+            });
+          } else {
+            console.error("Failed to load budgets: " + xhr.status);
+            console.error(response.errors);
+            
+          }
+        }
+      };
+      xhr.send();
+    });
+  </script>
 <script th:src="@{/js/general-dropzone.js}" type="text/javascript"
         th:data-csrf-token="${_csrf.token}" th:data-csrf-header="${_csrf.headerName}"></script>
 </body>

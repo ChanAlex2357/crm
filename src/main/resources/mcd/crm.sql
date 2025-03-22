@@ -98,6 +98,20 @@ CREATE TABLE currency(
    PRIMARY KEY(id)
 );
 
+CREATE TABLE alert_type(
+   id INT AUTO_INCREMENT,
+   val VARCHAR(100) ,
+   desce VARCHAR(100) ,
+   PRIMARY KEY(id)
+);
+
+CREATE TABLE expense_settings(
+   id INT AUTO_INCREMENT,
+   taux DECIMAL(15,2)  ,
+   date_taux VARCHAR(100) ,
+   PRIMARY KEY(id)
+);
+
 CREATE TABLE customer(
    customer_id INT AUTO_INCREMENT,
    name VARCHAR(255) ,
@@ -242,17 +256,17 @@ CREATE TABLE customer_budget(
 CREATE TABLE trigger_ticket(
    ticket_id INT,
    subject VARCHAR(255) ,
-   status VARCHAR(100) ,
    description TEXT,
+   status VARCHAR(100) ,
    priority VARCHAR(100) ,
    created_at DATETIME,
    customer_id INT NOT NULL,
    employee_id INT NOT NULL,
-   manager_id INT NOT NULL,
+   maager_id INT NOT NULL,
    PRIMARY KEY(ticket_id),
    FOREIGN KEY(customer_id) REFERENCES customer(customer_id),
    FOREIGN KEY(employee_id) REFERENCES Users(id),
-   FOREIGN KEY(manager_id) REFERENCES Users(id)
+   FOREIGN KEY(maager_id) REFERENCES Users(id)
 );
 
 CREATE TABLE lead_action(
@@ -266,19 +280,36 @@ CREATE TABLE lead_action(
 
 CREATE TABLE customer_expense(
    expense_id INT AUTO_INCREMENT,
-   date_expense DATE NOT NULL,
-   amount DECIMAL(15,2)   NOT NULL,
-   created_at DATETIME,
-   updated_at DATETIME,
-   ticket_id INT NOT NULL,
-   lead_id INT NOT NULL,
+   amount DECIMAL(15,2)  ,
+   date_expense VARCHAR(100) ,
+   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTA,
+   customer_id INT,
+   ticket_id INT,
    budget_id INT NOT NULL,
-   customer_id INT NOT NULL,
+   lead_id INT NOT NULL,
    PRIMARY KEY(expense_id),
+   FOREIGN KEY(customer_id) REFERENCES customer(customer_id),
    FOREIGN KEY(ticket_id) REFERENCES trigger_ticket(ticket_id),
-   FOREIGN KEY(lead_id) REFERENCES trigger_lead(lead_id),
    FOREIGN KEY(budget_id) REFERENCES customer_budget(budget_id),
-   FOREIGN KEY(customer_id) REFERENCES customer(customer_id)
+   FOREIGN KEY(lead_id) REFERENCES trigger_lead(lead_id)
+);
+
+CREATE TABLE expense_alert(
+   alert_id INT AUTO_INCREMENT,
+   budget_amount DECIMAL(15,2)  ,
+   taux DECIMAL(15,2)  ,
+   message TEXT,
+   expense DECIMAL(15,2)  ,
+   date_alert INT AUTO_INCREMENT NOT NULL,
+   status INT,
+   budget_id INT NOT NULL,
+   expense_id INT NOT NULL,
+   alert_type_id INT NOT NULL,
+   PRIMARY KEY(alert_id),
+   FOREIGN KEY(budget_id) REFERENCES customer_budget(budget_id),
+   FOREIGN KEY(expense_id) REFERENCES customer_expense(expense_id),
+   FOREIGN KEY(alert_type_id) REFERENCES alert_type(id)
 );
 
 CREATE TABLE user_roles(

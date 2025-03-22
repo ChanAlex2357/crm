@@ -31,7 +31,7 @@
 <div class="preloader">
     <div class="loader">
         <div class="loader__figure"></div>
-        <p class="loader__label">Elite admin</p>
+        <p class="loader__label">CRM</p>
     </div>
 </div>
 <!-- ============================================================== -->
@@ -74,24 +74,33 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Email Templates Tags</h4>
+                            <h4 class="card-title">Budgets</h4>
                             <div class="table-responsive m-t-40">
                                 <table id="config-table" class="table display table-bordered table-striped no-wrap">
                                     <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>value</th>
-                                        <th>Edit</th>
-                                        <th>Delete</th>
+                                        <th>#</th>
+                                        <th>Customer</th>
+                                        <th>Amount</th>
+                                        <th>Currency</th>
+                                        <th>Start date</th>
+                                        <th>End date</th>
+                                        <th>Description</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr th:if="${tags != null}" th:each="tag : ${tags}">
-                                        <td th:text="${tag.tagName}"></td>
-                                        <td th:text="${tag.tagValue}"></td>
-                                        <td><a th:href="'/email-template/update-tag/' + ${tag.id}"><i class="fas fa-edit"></i></a></td>
+                                    <tr th:if="${contracts != null}" th:each="contract : ${contracts}">
+                                        <td th:text="${contract.contractId}"></td>
+                                        <td th:text="${contract.subject}"></td>
+                                        <td th:text="${contract.status}"></td>
+                                        <td th:text="${contract.customer.name}"></td>
+                                        <td th:text="${contract.user.username}"></td>
+                                        <td th:text="${contract.startDate}"></td>
+                                        <td th:text="${contract.endDate}"></td>
+                                        <td><a th:href="${home + 'employee/contract/show-details/' + contract.contractId}"><i class="fas fa-eye"></i></a></td>
+                                        <td><a th:href="${home + 'employee/contract/update/' + contract.contractId}"><i class="fas fa-edit"></i></a></td>
                                         <td>
-                                            <form th:action="'/email-template/delete-tag/' + ${tag.id}" method="post">
+                                            <form th:action="${home + 'employee/contract/delete/' + contract.contractId}" method="post">
                                                 <button type="submit" class="btn btn-primary">
                                                     <i class="mdi mdi-delete"></i>
                                                 </button>

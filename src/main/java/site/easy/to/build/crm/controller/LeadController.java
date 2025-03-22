@@ -42,21 +42,15 @@ import site.easy.to.build.crm.util.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jakarta.validation.Validator;
-
 @Controller
 @RequestMapping("/employee/lead")
 public class LeadController {
-
-    @Autowired
-    private Validator validator;
 
     private final LeadService leadService;
     private final AuthenticationUtils authenticationUtils;
@@ -79,7 +73,6 @@ public class LeadController {
     @Autowired
     private CustomerExpenseService expenseService;
 
-    @Autowired
     public LeadController(LeadService leadService, AuthenticationUtils authenticationUtils, UserService userService, CustomerService customerService,
                           LeadActionService leadActionService, GoogleCalendarApiService googleCalendarApiService, FileService fileService,
                           GoogleDriveApiService googleDriveApiService, GoogleDriveFileService googleDriveFileService, FileUtil fileUtil,
@@ -236,25 +229,7 @@ public class LeadController {
             populateModelAttributes(model, authentication, user);
             return "lead/create-lead";
         }
-        // Create expense
-        CustomerExpense expense = new CustomerExpense();
-        expense.setAmount(BigDecimal.valueOf(amount));
-        expense.setDateExpense(dateExpense);
-        expense.setLead(createdLead);
-        expense.setCustomer(customer);
-        expense.setBudget(budget);
-
-        Set<ConstraintViolation<CustomerExpense>> violations = validator.validate(expense);
-        if (!violations.isEmpty()) {
-            for (ConstraintViolation<CustomerExpense> violation : violations) {
-                bindingResult.rejectValue(violation.getPropertyPath().toString(), "", violation.getMessage());
-            }
-            User user = userService.findById(userId);
-            populateModelAttributes(model, authentication, user);
-            return "lead/create-lead";
-        }
-
-        expenseService.createExpense(expense);
+        expenseService.createCustomerExpense(amount, dateExpense, budget, customer, createdLead);
 
         fileUtil.saveFiles(allFiles, createdLead);
 

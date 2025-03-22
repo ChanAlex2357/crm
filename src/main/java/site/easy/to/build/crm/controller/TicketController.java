@@ -29,7 +29,6 @@ import site.easy.to.build.crm.util.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -54,7 +53,6 @@ public class TicketController {
     @Autowired
     private CustomerExpenseService expenseService;
 
-    @Autowired
     public TicketController(TicketService ticketService, AuthenticationUtils authenticationUtils, UserService userService, CustomerService customerService,
                             TicketEmailSettingsService ticketEmailSettingsService, GoogleGmailApiService googleGmailApiService, EntityManager entityManager) {
         this.ticketService = ticketService;
@@ -178,14 +176,7 @@ public class TicketController {
         if (budget == null) {
             return createTicketErrorRedirection(model, authentication, manager);
         }
-        // Create expense
-        CustomerExpense expense = new CustomerExpense();
-        expense.setAmount(BigDecimal.valueOf(amount));
-        expense.setDateExpense(dateExpense);
-        expense.setTicket(ticket);
-        expense.setCustomer(customer);
-        expense.setBudget(budget);
-        expenseService.createExpense(expense);
+        expenseService.createCustomerExpense(amount, dateExpense, budget, customer,ticket);
         
         return "redirect:/employee/ticket/assigned-tickets";
     }

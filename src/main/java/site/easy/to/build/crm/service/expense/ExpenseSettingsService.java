@@ -31,5 +31,9 @@ public class ExpenseSettingsService {
     public void deleteExpenseSettings(int id) {
         expenseSettingsRepository.deleteById(id);
     }
+    
+    public ExpenseSettings getLatestExpenseSettings() {
+        return expenseSettingsRepository.findFirstByOrderByDateAlertDesc();
+    }
 }
 

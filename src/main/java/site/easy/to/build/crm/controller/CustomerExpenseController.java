@@ -2,16 +2,27 @@ package site.easy.to.build.crm.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.CustomerExpense;
+import site.easy.to.build.crm.entity.Lead;
+import site.easy.to.build.crm.entity.Ticket;
+import site.easy.to.build.crm.entity.User;
+import site.easy.to.build.crm.service.customer.CustomerServiceImpl;
 import site.easy.to.build.crm.service.expense.CustomerExpenseService;
+import site.easy.to.build.crm.service.lead.LeadServiceImpl;
+import site.easy.to.build.crm.service.ticket.TicketServiceImpl;
+import site.easy.to.build.crm.service.user.UserServiceImpl;
+import site.easy.to.build.crm.util.AuthenticationUtils;
+import site.easy.to.build.crm.util.AuthorizationUtil;
 import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
-import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -19,12 +30,60 @@ import java.util.List;
 public class CustomerExpenseController {
 
     @Autowired
+    private TicketServiceImpl ticketService;
+    @Autowired
+    private LeadServiceImpl leadService;
+
+    @Autowired
+    private UserServiceImpl userService;
+
+    @Autowired
+    private AuthenticationUtils authenticationUtils;
+
+    @Autowired
+    private CustomerServiceImpl customerService;
+    
+    @Autowired
     private CustomerExpenseService expenseService;
     
     // Show form to create a new expense
     @GetMapping("/create")
-    public String showCreateExpenseForm(Model model) {
+    public String showCreateExpenseForm(Model model , Authentication authentication) {
+        // Verification des droits d'acces
+        int userId = authenticationUtils.getLoggedInUserId(authentication);
+        User user = userService.findById(userId);
+        if (user.isInactiveUser()) {
+            return "error/account-inactive";
+        }
+
+        List<Customer> customers;
+        if (AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER")) {
+            customers = customerService.findAll();
+        } else {
+            customers = customerService.findByUserId(userId);
+        }
+
+        List<Lead> leads ;
+        if (AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER")) {
+            leads = leadService.findAll();
+        } else {
+            leads = leadService.findAssignedLeads(userId);
+        }
+
+
+        List<Ticket> tickets;
+        if (AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER")) {
+            tickets = ticketService.findAll();
+        } else {
+            tickets = ticketService.findEmployeeTickets(userId);
+        }
+
+        model.addAttribute("leads", leads);
+        model.addAttribute("tickets", tickets);
+        model.addAttribute("customers", customers);
         model.addAttribute("expense", new CustomerExpense());
+
+
         return "expense/create"; // corresponding Thymeleaf template
     }
     

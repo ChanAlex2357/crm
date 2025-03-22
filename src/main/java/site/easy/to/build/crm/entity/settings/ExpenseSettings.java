@@ -1,7 +1,7 @@
 package site.easy.to.build.crm.entity.settings;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,6 +23,6 @@ public class ExpenseSettings {
     private BigDecimal taux;
 
     @Column(name = "date_taux")
-    private Date dateTaux;
+    private LocalDate dateTaux;
 }
 

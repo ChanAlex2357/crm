@@ -17,8 +17,16 @@ public class AdminImportService {
     }
     public ImportBody importData(MultipartFile file, ImportService importService,char separator){
         ImportBody importBody = new ImportBody();
-        List<CsvMapping> data = csvService.parseCSV(file, importService.getMapping(), separator);
-        importService.importData(data,importBody);
+        try {
+            List<CsvMapping> data = csvService.parseCSV(file, importService.getMapping(), separator);
+            importService.importData(data,importBody);
+        } catch (Exception e) {
+            String message = e.getMessage();
+            if (e.getCause() != null) {
+                message += "\n [ because ] :: "+e.getCause().getMessage();
+            }
+            importBody.addError(message,0);
+        }
         return importBody;
     }
 }

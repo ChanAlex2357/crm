@@ -1,6 +1,7 @@
 package site.easy.to.build.crm.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,23 +38,29 @@ public class Budget {
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
-
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
-
+    
     @Column(name = "start_date", nullable = false)
     @NotBlank(message = "Start Date is required")
     @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}", message = "Invalid date format. Expected format: yyyy-MM-dd")
     private String startDate;
-
+    
     @Column(name = "end_date", nullable = false)
     @NotBlank(message = "End Date is required")
     @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}", message = "Invalid date format. Expected format: yyyy-MM-dd")
     private String endDate;
 
     @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
+    @ManyToOne
     @JoinColumn(name = "currency")
     @NotNull(message = "Currency is required")
-    private Currency currency;
+    private Devise currency;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }

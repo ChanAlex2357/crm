@@ -14,7 +14,7 @@ import site.easy.to.build.crm.entity.Lead;
 import site.easy.to.build.crm.entity.Ticket;
 import site.easy.to.build.crm.entity.User;
 import site.easy.to.build.crm.service.customer.CustomerServiceImpl;
-import site.easy.to.build.crm.service.expense.CustomerExpenseService;
+import site.easy.to.build.crm.service.expense.ExpenseService;
 import site.easy.to.build.crm.service.lead.LeadServiceImpl;
 import site.easy.to.build.crm.service.ticket.TicketServiceImpl;
 import site.easy.to.build.crm.service.user.UserServiceImpl;
@@ -44,7 +44,7 @@ public class CustomerExpenseController {
     private CustomerServiceImpl customerService;
     
     @Autowired
-    private CustomerExpenseService expenseService;
+    private ExpenseService expenseService;
     
     // Show form to create a new expense
     @GetMapping("/create")

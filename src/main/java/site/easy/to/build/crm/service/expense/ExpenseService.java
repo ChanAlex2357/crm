@@ -18,10 +18,10 @@ import site.easy.to.build.crm.entity.Expense;
 import site.easy.to.build.crm.entity.ExpenseAlert;
 import site.easy.to.build.crm.entity.Lead;
 import site.easy.to.build.crm.entity.Ticket;
-import site.easy.to.build.crm.repository.CustomerExpenseRepository;
+import site.easy.to.build.crm.repository.ExpenseRepository;
 
 @Service
-public class CustomerExpenseService {
+public class ExpenseService {
 
     @Autowired
     private ExpenseSettingsService expenseSettingsService;
@@ -32,7 +32,7 @@ public class CustomerExpenseService {
     private Validator validator;
 
     @Autowired
-    private CustomerExpenseRepository expenseRepository;
+    private ExpenseRepository expenseRepository;
     
     @Transactional
     // Create a new expense

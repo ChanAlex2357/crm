@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import site.easy.to.build.crm.entity.Expense;
 
 @Repository
-public interface CustomerExpenseRepository extends JpaRepository<Expense, Integer> {
+public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
    
 }

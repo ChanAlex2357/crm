@@ -24,6 +24,7 @@ DELETE FROM `user_profile`;
 DELETE FROM `oauth_users`;
 DELETE FROM `users`;
 DELETE FROM `currency`;
+DELETE FROM `alert_type`;
 
 
 
@@ -43,6 +44,9 @@ ON DUPLICATE KEY UPDATE id = id;
 
 -- [ EXPENSE SETTINGS ]
 INSERT into `expense_settings` (taux, date_taux) VALUES (100, '2025-01-01');
+
+-- ALERT TYPES
+INSERT INTO `alert_type` (id,val,desce) VALUES (1,'Taux alerte','Taux alerte atteint'),(2,'Depassement alerte','Depassement du budget');
 
 -- Réactiver les contraintes de clé étrangère si nécessaire
 SET FOREIGN_KEY_CHECKS = 1;

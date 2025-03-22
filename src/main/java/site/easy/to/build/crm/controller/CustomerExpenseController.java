@@ -9,7 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import site.easy.to.build.crm.entity.Customer;
-import site.easy.to.build.crm.entity.CustomerExpense;
+import site.easy.to.build.crm.entity.Expense;
 import site.easy.to.build.crm.entity.Lead;
 import site.easy.to.build.crm.entity.Ticket;
 import site.easy.to.build.crm.entity.User;
@@ -81,7 +81,7 @@ public class CustomerExpenseController {
         model.addAttribute("leads", leads);
         model.addAttribute("tickets", tickets);
         model.addAttribute("customers", customers);
-        model.addAttribute("expense", new CustomerExpense());
+        model.addAttribute("expense", new Expense());
 
 
         return "expense/create"; // corresponding Thymeleaf template
@@ -89,7 +89,7 @@ public class CustomerExpenseController {
     
     // Process creation of expense
     @PostMapping("/create")
-    public String createExpense(@ModelAttribute("expense") @Valid CustomerExpense expense, BindingResult bindingResult) {
+    public String createExpense(@ModelAttribute("expense") @Valid Expense expense, BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
             return "expense/create";
         }
@@ -103,7 +103,7 @@ public class CustomerExpenseController {
     // List all expenses
     @GetMapping("/show-all")
     public String showAllExpenses(Model model) {
-        List<CustomerExpense> expenses = expenseService.getAllExpenses();
+        List<Expense> expenses = expenseService.getAllExpenses();
         model.addAttribute("expenses", expenses);
         return "expense/expenses"; // Thymeleaf template for listing
     }
@@ -111,7 +111,7 @@ public class CustomerExpenseController {
     // Show details of a specific expense
     @GetMapping("/show/{id}")
     public String showExpense(@PathVariable("id") int id, Model model) {
-        CustomerExpense expense = expenseService.getExpenseById(id);
+        Expense expense = expenseService.getExpenseById(id);
         model.addAttribute("expense", expense);
         return "expense/show";
     }
@@ -119,14 +119,14 @@ public class CustomerExpenseController {
     // Show update form for an expense
     @GetMapping("/update/{id}")
     public String showUpdateExpenseForm(@PathVariable("id") int id, Model model) {
-        CustomerExpense expense = expenseService.getExpenseById(id);
+        Expense expense = expenseService.getExpenseById(id);
         model.addAttribute("expense", expense);
         return "expense/update";
     }
     
     // Process the update of an expense
     @PostMapping("/update")
-    public String updateExpense(@ModelAttribute("expense") @Valid CustomerExpense expense, BindingResult bindingResult) {
+    public String updateExpense(@ModelAttribute("expense") @Valid Expense expense, BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
             return "expense/update";
         }

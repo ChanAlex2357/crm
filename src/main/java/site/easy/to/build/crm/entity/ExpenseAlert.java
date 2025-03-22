@@ -43,7 +43,7 @@ public class ExpenseAlert {
 
     @ManyToOne
     @JoinColumn(name = "expense_id", nullable = false)
-    private CustomerExpense expense;
+    private Expense expense;
 
     @ManyToOne
     @JoinColumn(name = "alert_type_id", nullable = false)

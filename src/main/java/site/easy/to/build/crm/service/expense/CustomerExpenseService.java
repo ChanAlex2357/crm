@@ -9,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
+import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.entity.Customer;
-import site.easy.to.build.crm.entity.CustomerExpense;
+import site.easy.to.build.crm.entity.Expense;
+import site.easy.to.build.crm.entity.ExpenseAlert;
 import site.easy.to.build.crm.entity.Lead;
 import site.easy.to.build.crm.entity.Ticket;
 import site.easy.to.build.crm.repository.CustomerExpenseRepository;
@@ -22,18 +24,24 @@ import site.easy.to.build.crm.repository.CustomerExpenseRepository;
 public class CustomerExpenseService {
 
     @Autowired
+    private ExpenseSettingsService expenseSettingsService;
+
+    @Autowired
+    private ExpenseAlertService expenseAlertService;
+    @Autowired
     private Validator validator;
 
     @Autowired
     private CustomerExpenseRepository expenseRepository;
     
+    @Transactional
     // Create a new expense
-    public CustomerExpense createExpense(CustomerExpense expense) {
+    public Expense createExpense(Expense expense) {
         return expenseRepository.save(expense);
     }
     
     // Update an existing expense
-    public CustomerExpense updateExpense(CustomerExpense expense) {
+    public Expense updateExpense(Expense expense) {
         if(!expenseRepository.existsById(expense.getExpenseId())){
             throw new RuntimeException("Expense not found with id: " + expense.getExpenseId());
         }
@@ -49,37 +57,43 @@ public class CustomerExpenseService {
     }
     
     // Retrieve an expense by id
-    public CustomerExpense getExpenseById(int id) {
+    public Expense getExpenseById(int id) {
         return expenseRepository.findById(id)
                .orElseThrow(() -> new RuntimeException("Expense not found with id: " + id));
     }
     
     // Retrieve all expenses
-    public List<CustomerExpense> getAllExpenses() {
+    public List<Expense> getAllExpenses() {
         return expenseRepository.findAll();
     }
 
-
-    public CustomerExpense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,Ticket ticket) {
-        CustomerExpense expense = new CustomerExpense();
+    @Transactional
+    public Expense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,Ticket ticket) {
+        Expense expense = new Expense();
         expense.setTicket(ticket);
         return createCustomerExpense(amount, dateExpense, budget, customer, expense);
     }
-    public CustomerExpense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,CustomerExpense expense) {
+    @Transactional
+    public Expense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,Expense expense) {
         expense.setAmount(BigDecimal.valueOf(amount));
         expense.setDateExpense(dateExpense);
         expense.setCustomer(customer);
         expense.setBudget(budget);
         createExpense(expense);
+        List<ExpenseAlert> alerts = expenseSettingsService.checkExpenseAlerts(expense);
+        for (ExpenseAlert expenseAlert : alerts) {
+            expenseAlertService.createExpenseAlert(expenseAlert);
+        }
         
         return expense;
     }
 
-    public CustomerExpense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,CustomerExpense expense,BindingResult bindingResult) {
+    @Transactional
+    public Expense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,Expense expense,BindingResult bindingResult) {
     
-        Set<ConstraintViolation<CustomerExpense>> violations = validator.validate(expense);
+        Set<ConstraintViolation<Expense>> violations = validator.validate(expense);
         if (!violations.isEmpty()) {
-            for (ConstraintViolation<CustomerExpense> violation : violations) {
+            for (ConstraintViolation<Expense> violation : violations) {
                 bindingResult.rejectValue(violation.getPropertyPath().toString(), "", violation.getMessage());
             }
         }
@@ -90,8 +104,9 @@ public class CustomerExpenseService {
         return createCustomerExpense(amount, dateExpense, budget, customer, expense);
     }
     
-    public CustomerExpense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,Lead lead) {
-        CustomerExpense expense = new CustomerExpense();
+    @Transactional
+    public Expense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,Lead lead) {
+        Expense expense = new Expense();
         expense.setLead(lead);
         return createCustomerExpense(amount, dateExpense, budget, customer, expense);
     }

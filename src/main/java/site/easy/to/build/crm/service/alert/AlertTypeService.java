@@ -32,4 +32,7 @@ public class AlertTypeService {
     public void deleteAlertType(int id) {
         alertTypeRepository.deleteById(id);
     }
+
+    public AlertType getTauxAlert(){return alertTypeRepository.findById(1).orElseThrow( () -> new RuntimeException("Taux d'alert not found with id: 1"));}
+    public AlertType getDepassementAlert(){return alertTypeRepository.findById(2).orElseThrow( () -> new RuntimeException("Alerte de depassement not found with id: 2"));}
 }

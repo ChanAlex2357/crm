@@ -33,7 +33,7 @@ public class ExpenseSettingsService {
     }
     
     public ExpenseSettings getLatestExpenseSettings() {
-        return expenseSettingsRepository.findFirstByOrderByDateAlertDesc();
+        return expenseSettingsRepository.findFirstByOrderByDateTauxDesc();
     }
 }
 

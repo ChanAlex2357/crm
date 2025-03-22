@@ -5,8 +5,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityManager;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import site.easy.to.build.crm.entity.*;
+import site.easy.to.build.crm.entity.settings.ExpenseSettings;
 import site.easy.to.build.crm.entity.settings.LeadEmailSettings;
 import site.easy.to.build.crm.google.model.calendar.EventDisplay;
 import site.easy.to.build.crm.google.model.drive.GoogleDriveFolder;
@@ -32,6 +33,7 @@ import site.easy.to.build.crm.service.budget.BudgetService;
 import site.easy.to.build.crm.service.customer.CustomerService;
 import site.easy.to.build.crm.service.drive.GoogleDriveFileService;
 import site.easy.to.build.crm.service.expense.CustomerExpenseService;
+import site.easy.to.build.crm.service.expense.ExpenseSettingsService;
 import site.easy.to.build.crm.service.file.FileService;
 import site.easy.to.build.crm.service.lead.LeadActionService;
 import site.easy.to.build.crm.service.lead.LeadService;
@@ -50,8 +52,11 @@ import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/employee/lead")
+@Slf4j
 public class LeadController {
 
+    @Autowired
+    private ExpenseSettingsService expenseSettingsService;
     private final LeadService leadService;
     private final AuthenticationUtils authenticationUtils;
     private final UserService userService;
@@ -171,6 +176,9 @@ public class LeadController {
             return "error/account-inactive";
         }
         populateModelAttributes(model, authentication, user);
+        ExpenseSettings expenseSettings = expenseSettingsService.getLatestExpenseSettings();
+        log.info(" - - - Latest Expense settings - - - {}", expenseSettings);
+        model.addAttribute("expenseSettings", expenseSettings);
         model.addAttribute("lead", new Lead());
         return "lead/create-lead";
     }

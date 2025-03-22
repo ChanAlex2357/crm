@@ -77,7 +77,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Create New Ticket</h4>
-                            <form th:object="${ticket}" th:action="@{/employee/ticket/create-ticket}" method="post">
+                            <form th:object="${ticket}" id="ticket-form" th:action="@{/employee/ticket/create-ticket}" method="post">
 
                                 <label class="m-t-20" for="subject">Subject:</label>
                                 <div class="input-group">
@@ -156,13 +156,31 @@
                                 </div>
                                 
                                 <!-- Budget Dropdown -->
-                                <label class="m-t-20" for="budget">Budget:</label>
+                                <label class="m-t-20" for="budget">Budget: <span class="font-weight-bold" id="limitation"></span></label>
                                 <div class="input-group">
                                 <select name="budgetId" id="budget" class="form-control">
-                                    <option th:each="budget : ${budgets}" th:text="${budget.budgetId} + ' - ' + ${budget.customer.name}" th:value="${budget.budgetId}"></option>
+                                    <option value="">Select customer's budget</option>
                                 </select>
                                 </div>
-
+                                <!-- Bootstrap Modal -->
+                                <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="confirmationModalLabel">Confirm Amount</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div id="confirmations" class="mb-3"></div>
+                                                <p>Are you sure you want to proceed with this amount?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="confirmationModal">Cancel</button>
+                                                <button type="button" class="btn btn-primary" id="confirmSubmit">Confirm</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <button type="submit" class="btn btn-primary m-t-20">Create ticket</button>
                             </form>
                         </div>
@@ -244,7 +262,77 @@ $('#timepicker').bootstrapMaterialDatePicker({ format: 'HH:mm', time: true, date
 $('#date-format').bootstrapMaterialDatePicker({ format: 'dddd DD MMMM YYYY - HH:mm' });
 $('#min-date').bootstrapMaterialDatePicker({ format: 'DD/MM/YYYY HH:mm', minDate: new Date() });
 </script>
-<script>
+<script th:inline="javascript">
+    var expenseSettings = /*[[${expenseSettings}]]*/ null;
+    console.info(expenseSettings)
+    var budget = {'amount':10000};
+    var budgets = []
+   
+    function checkExpenseAmount(amount) {
+        const confirmations = [];
+
+        const tauxAmount = (budget.amount * expenseSettings.taux) / 100
+        console.log("taux :: ");
+        console.log(tauxAmount);
+        
+        
+        if (amount > budget.amount) {
+            confirmations.push({'type':1,'title':'Taux d\'alert atteint','message':"Depense a atteint la limitation de taux d'alert de "+expenseSettings.taux+"%"});
+        }
+        if (amount > budget.amount) {
+            confirmations.push({'type':2,'title':'Depassement de budget','message':"Depense depasse la limite du budget : "+budget.amount});
+        }
+        return confirmations;
+    }
+
+    document.getElementById('budget').addEventListener('change' , function(event) {
+        const selectedValue = event.target.value;
+        budget = budgets.find(budget => budget.budgetId === parseInt(selectedValue));
+         
+        const limitationLabel = document.getElementById('limitation');
+        limitationLabel.innerHTML = ''+budget.amount
+    })
+
+    document.getElementById('ticket-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const amountInput = document.querySelector('input[name="amount"]');
+        const amount = parseFloat(amountInput.value);
+
+        const confirmations = checkExpenseAmount(amount);
+        if (confirmations.length > 0) {
+            const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+            const confirmationsDiv = document.getElementById('confirmations');
+            confirmations.forEach(confirmation => {
+                confirmationsDiv.innerHTML = `<div class="alert alert-warning"><h4>${confirmation.title}</h4><div>${confirmation.message}</div></div>`
+            })
+            
+            console.log(confirmations);
+            
+            modal.show();
+            document.getElementById('confirmSubmit').addEventListener('click', () => {
+                this.submit();
+            });
+        } else {
+            this.submit();
+        }
+        
+    });
+
+
+    
+    function renderBudgets(){
+        var budgetSelect = document.getElementById("budget");
+        // clear current options
+        budgetSelect.innerHTML = "<option>Select customer's budget</option>";
+        // add new options from the response
+        budgets.forEach(function(budget) {
+            var option = document.createElement("option");
+            option.value = budget.budgetId;
+            option.text = budget.description;
+            budgetSelect.appendChild(option);
+        });
+    }
+    // Dynamic Budget Data
     document.getElementById("customerId").addEventListener("change", function() {
       var selectedCustomerId = this.value;
       var xhr = new XMLHttpRequest();
@@ -253,20 +341,9 @@ $('#min-date').bootstrapMaterialDatePicker({ format: 'DD/MM/YYYY HH:mm', minDate
       xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             var response = JSON.parse(xhr.responseText);
-            console.log(response);
           if (xhr.status === 200) {
-            var budgets = response.data;
-            var budgetSelect = document.getElementById("budget");
-            // clear current options
-            budgetSelect.innerHTML = "";
-            // add new options from the response
-            console.log(budgets);
-            budgets.forEach(function(budget) {
-              var option = document.createElement("option");
-              option.value = budget.budgetId;
-              option.text = budget.description;
-              budgetSelect.appendChild(option);
-            });
+            budgets = response.data;
+            renderBudgets()
           } else {
             console.error("Failed to load budgets: " + xhr.status);
             console.error(response.errors);
@@ -276,7 +353,7 @@ $('#min-date').bootstrapMaterialDatePicker({ format: 'DD/MM/YYYY HH:mm', minDate
       };
       xhr.send();
     });
-  </script>
+</script>
   <script th:src="@{/js/general-dropzone.js}" type="text/javascript"
   th:data-csrf-token="${_csrf.token}" th:data-csrf-header="${_csrf.headerName}"></script>
 

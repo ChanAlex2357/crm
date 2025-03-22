@@ -178,7 +178,6 @@ public class LeadController {
         }
         populateModelAttributes(model, authentication, user);
         ExpenseSettings expenseSettings = expenseSettingsService.getLatestExpenseSettings();
-        log.info(" - - - Latest Expense settings - - - {}", expenseSettings);
         model.addAttribute("expenseSettings", expenseSettings);
         model.addAttribute("lead", new Lead());
         return "lead/create-lead";

@@ -15,12 +15,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import site.easy.to.build.crm.entity.*;
+import site.easy.to.build.crm.entity.settings.ExpenseSettings;
 import site.easy.to.build.crm.entity.settings.TicketEmailSettings;
 import site.easy.to.build.crm.google.service.acess.GoogleAccessService;
 import site.easy.to.build.crm.google.service.gmail.GoogleGmailApiService;
 import site.easy.to.build.crm.service.budget.BudgetService;
 import site.easy.to.build.crm.service.customer.CustomerService;
 import site.easy.to.build.crm.service.expense.ExpenseService;
+import site.easy.to.build.crm.service.expense.ExpenseSettingsService;
 import site.easy.to.build.crm.service.settings.TicketEmailSettingsService;
 import site.easy.to.build.crm.service.ticket.TicketService;
 import site.easy.to.build.crm.service.user.UserService;
@@ -52,6 +54,9 @@ public class TicketController {
 
     @Autowired
     private ExpenseService expenseService;
+
+    @Autowired
+    private ExpenseSettingsService expenseSettingsService;
 
     public TicketController(TicketService ticketService, AuthenticationUtils authenticationUtils, UserService userService, CustomerService customerService,
                             TicketEmailSettingsService ticketEmailSettingsService, GoogleGmailApiService googleGmailApiService, EntityManager entityManager) {
@@ -97,6 +102,7 @@ public class TicketController {
         int userId = authenticationUtils.getLoggedInUserId(authentication);
         List<Ticket> tickets = ticketService.findManagerTickets(userId);
         model.addAttribute("tickets",tickets);
+        
         return "ticket/my-tickets";
     }
     
@@ -128,6 +134,8 @@ public class TicketController {
         model.addAttribute("employees",employees);
         model.addAttribute("customers",customers);
         model.addAttribute("ticket", new Ticket());
+        ExpenseSettings expenseSettings = expenseSettingsService.getLatestExpenseSettings();
+        model.addAttribute("expenseSettings", expenseSettings);
         return "ticket/create-ticket";
     }
     

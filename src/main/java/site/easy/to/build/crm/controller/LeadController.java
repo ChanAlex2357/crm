@@ -5,6 +5,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityManager;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.constraints.NotNull;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -25,8 +28,10 @@ import site.easy.to.build.crm.google.service.acess.GoogleAccessService;
 import site.easy.to.build.crm.google.service.calendar.GoogleCalendarApiService;
 import site.easy.to.build.crm.google.service.drive.GoogleDriveApiService;
 import site.easy.to.build.crm.google.service.gmail.GoogleGmailApiService;
+import site.easy.to.build.crm.service.budget.BudgetService;
 import site.easy.to.build.crm.service.customer.CustomerService;
 import site.easy.to.build.crm.service.drive.GoogleDriveFileService;
+import site.easy.to.build.crm.service.expense.CustomerExpenseService;
 import site.easy.to.build.crm.service.file.FileService;
 import site.easy.to.build.crm.service.lead.LeadActionService;
 import site.easy.to.build.crm.service.lead.LeadService;
@@ -37,15 +42,21 @@ import site.easy.to.build.crm.util.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jakarta.validation.Validator;
+
 @Controller
 @RequestMapping("/employee/lead")
 public class LeadController {
+
+    @Autowired
+    private Validator validator;
 
     private final LeadService leadService;
     private final AuthenticationUtils authenticationUtils;
@@ -60,6 +71,13 @@ public class LeadController {
     private final LeadEmailSettingsService leadEmailSettingsService;
     private final GoogleGmailApiService googleGmailApiService;
     private final EntityManager entityManager;
+
+    
+    @Autowired
+    private BudgetService budgetService;
+
+    @Autowired
+    private CustomerExpenseService expenseService;
 
     @Autowired
     public LeadController(LeadService leadService, AuthenticationUtils authenticationUtils, UserService userService, CustomerService customerService,
@@ -168,7 +186,10 @@ public class LeadController {
     public String createLead(@ModelAttribute("lead") @Validated Lead lead, BindingResult bindingResult,
                              @RequestParam("customerId") int customerId, @RequestParam("employeeId") int employeeId,
                              Authentication authentication, @RequestParam("allFiles")@Nullable String files,
-                             @RequestParam("folderId") @Nullable String folderId, Model model) throws JsonProcessingException {
+                             @RequestParam("folderId") @Nullable String folderId, Model model,
+                             @RequestParam("amount") @NotNull double amount,
+                             @RequestParam("dateExpense") @NotNull String dateExpense,
+                             @RequestParam("budgetId") int budgetId) throws JsonProcessingException {
 
         int userId = authenticationUtils.getLoggedInUserId(authentication);
         User manager = userService.findById(userId);
@@ -209,6 +230,32 @@ public class LeadController {
         }
 
         Lead createdLead = leadService.save(lead);
+        Budget budget = budgetService.getBudgetById(budgetId);
+        if (budget == null) {
+            User user = userService.findById(userId);
+            populateModelAttributes(model, authentication, user);
+            return "lead/create-lead";
+        }
+        // Create expense
+        CustomerExpense expense = new CustomerExpense();
+        expense.setAmount(BigDecimal.valueOf(amount));
+        expense.setDateExpense(dateExpense);
+        expense.setLead(createdLead);
+        expense.setCustomer(customer);
+        expense.setBudget(budget);
+
+        Set<ConstraintViolation<CustomerExpense>> violations = validator.validate(expense);
+        if (!violations.isEmpty()) {
+            for (ConstraintViolation<CustomerExpense> violation : violations) {
+                bindingResult.rejectValue(violation.getPropertyPath().toString(), "", violation.getMessage());
+            }
+            User user = userService.findById(userId);
+            populateModelAttributes(model, authentication, user);
+            return "lead/create-lead";
+        }
+
+        expenseService.createExpense(expense);
+
         fileUtil.saveFiles(allFiles, createdLead);
 
         if (lead.getGoogleDrive() != null) {
@@ -221,6 +268,8 @@ public class LeadController {
         if(AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER")) {
             return "redirect:/employee/lead/created-leads";
         }
+
+        
         return "redirect:/employee/lead/assigned-leads";
     }
 

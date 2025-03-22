@@ -96,8 +96,8 @@
                         <span class="hide-menu">Budget</span>
                     </a>
                     <ul class="collapse">
-                        <li><a th:href="${home + 'all-budgets'}">All budget</a></li>
-                        <li><a th:href="${home + 'create-budget'}">Create budget</a></li>
+                        <li><a th:href="${home + 'employee/budget/show-all'}">All budget</a></li>
+                        <li><a th:href="${home + 'employee/budget/create'}">Create budget</a></li>
                     </ul>
                     <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">
                         <i class="fas fa-credit-card"></i>
@@ -105,7 +105,7 @@
                     </a>
                     <ul class="collapse">
                         <li><a th:href="${home + 'all-expenses'}">All expenses</a></li>
-                        <li><a th:href="${home + 'create-expense'}">Create expense</a></li>
+                        <li><a th:href="${home + 'employee/create-expense'}">Create expense</a></li>
                     </ul>
                 </li>
                 <li class="nav-small-cap">--- Customers</li>
@@ -243,6 +243,25 @@
                         <i class="fas fa-file-contract"></i>
                         <span class="hide-menu">My Contracts</span>
                     </a>
+                </li>
+                <li class="nav-small-cap">--- Budget &  Expenses</li>
+                <li>
+                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">
+                        <i class="fas fa-wallet"></i>
+                        <span class="hide-menu">Budget</span>
+                    </a>
+                    <ul class="collapse">
+                        <li><a th:href="${home + 'customer/my-budgets'}">My budgets</a></li>
+                        <li><a th:href="${home + 'customer/create-budget'}">Create budget</a></li>
+                    </ul>
+                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">
+                        <i class="fas fa-credit-card"></i>
+                        <span class="hide-menu">Expenses</span>
+                    </a>
+                    <ul class="collapse">
+                        <li><a th:href="${home + 'customer/my-expenses'}">My expenses</a></li>
+                        <li><a th:href="${home + 'customer/create-expense'}">Create expense</a></li>
+                    </ul>
                 </li>
             </ul>
         </nav>

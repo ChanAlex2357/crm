@@ -43,4 +43,8 @@ public class BudgetService {
         return budgetRepository.findById(budgetId)
             .orElseThrow(() -> new RuntimeException("Budget not found for id: " + budgetId));
     }
+
+    public List<Budget> findByCustomerId(int customerId) {
+        return budgetRepository.findByCustomerCustomerId(customerId);
+    }
 }

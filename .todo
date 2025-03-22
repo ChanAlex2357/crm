@@ -1,7 +1,12 @@
 # TODO - List
 
+## Debug projet
+
 - [x] Documentation Spring Security
 - [x] Documentation Authentication process
+
+## Importation de donnee
+
 - [x] Brainstorming Import generic
 - [x] Choix de tech adapte pour Spring boot
 - [x] Documentation OpenCsv
@@ -31,3 +36,21 @@
 - [x] Test d'excecution de la recuperation du fichier
   - [x] Reussir une importation de leads
   - [x] Afficher la liste des erreurs d'importations
+
+## Gestion de budget et depenses
+
+- [x] Analyse du sujet sur implementation dans l'existant
+
+### Budget
+
+- [ ] Bdd
+  - [x] Creation de la table budget
+  - [x] relation avec customer
+  - [x] Creation de la table avec customer
+- [ ] Affichage
+  - [ ] formulaire d'insertion de budget pour les employer
+  - [ ] formulaire d'insertion pour le client
+  - [ ] traitement des erreurs de validations
+  - [ ] restriction pour chaque role
+- [ ] Metier
+  - [ ] Creation du model customer_budget

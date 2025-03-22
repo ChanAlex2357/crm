@@ -37,3 +37,8 @@ CREATE TABLE customer_expense(
    FOREIGN KEY(budget_id) REFERENCES customer_budget(budget_id),
    FOREIGN KEY(customer_id) REFERENCES customer(customer_id)
 );
+
+ALTER TABLE customer_expense ADD COLUMN `lead` TINYINT(1);
+alter TABLE customer_expense ADD COLUMN `ticket` TINYINT(1);
+ALTER TABLE customer_expense MODIFY COLUMN lead_id INT unsigned NULL;
+ALTER TABLE customer_expense MODIFY COLUMN ticket_id INT unsigned NULL;

@@ -80,8 +80,8 @@
                   <thead>
                     <tr>
                       <th>#</th>
-                      <th>Ticket ID</th>
-                      <th>Lead ID</th>
+                      <th>Ticket</th>
+                      <th>Lead</th>
                       <th>Amount</th>
                       <th>Date Expense</th>
                       <th>Budget</th>
@@ -92,19 +92,25 @@
                   <tbody>
                     <tr th:if="${expenses != null}" th:each="expense : ${expenses}">
                       <td th:text="${expense.expenseId}"></td>
-                      <td th:text="${expense.ticketId}"></td>
-                      <td th:text="${expense.leadId}"></td>
+                      <td >
+                        <span th:if="${expense.ticket}" th:text="${expense.ticket.subject}"></span>
+                        <span th:unless="${expense.ticket}"> -- </span>
+                      </td>
+                      <td>
+                        <span th:if="${expense.lead}" th:text="${expense.lead.name}"></span>
+                        <span th:unless="${expense.lead}"> -- </span>
+                      </td>
                       <td th:text="${expense.amount}"></td>
                       <td th:text="${expense.dateExpense}"></td>
-                      <td th:text="${expense.budget.budgetId}"></td>
+                      <td th:text="${expense.budget.description}"></td>
                       <td th:text="${expense.customer.name}"></td>
                       <td>
-                        <a th:href="@{${home} + 'employee/expense/show/' + ${expense.expenseId}}" title="View">
+                        <!-- <a th:href="@{${home} + 'employee/expense/show/' + ${expense.expenseId}}" title="View">
                           <i class="fas fa-eye"></i>
                         </a>
                         <a th:href="@{${home} + 'employee/expense/update/' + ${expense.expenseId}}" title="Edit">
                           <i class="fas fa-edit"></i>
-                        </a>
+                        </a> -->
                         <form th:action="@{${home} + 'employee/expense/delete/' + ${expense.expenseId}}" method="post" style="display:inline;">
                           <button type="submit" class="btn btn-primary" title="Delete">
                             <i class="mdi mdi-delete"></i>

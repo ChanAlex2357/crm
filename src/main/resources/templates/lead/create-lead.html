@@ -7,6 +7,9 @@
 <link rel="stylesheet" th:href="@{/css/bootstrap-wysihtml5.css}"/>
 <!-- Editable CSS -->
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+<link th:href="@{/css/bootstrap-material-datetimepicker.css}" rel="stylesheet">
+<link th:href="@{/css/bootstrap-datepicker.min.css}" rel="stylesheet" type="text/css"/>
+<link th:href="@{/css/jquery-clockpicker.min.css}" rel="stylesheet">
 <!-- Custom CSS -->
 <link th:href="@{/css/style.min.css}" rel="stylesheet">
 <!-- page css -->
@@ -220,6 +223,16 @@
     $(document).ready(function() {
         $('.textarea_editor').wysihtml5();
     });
+</script>
+
+<script th:src="@{/js/library/bootstrap-material-datetimepicker.js}"></script>
+<script th:src="@{/js/library/bootstrap-datepicker.min.js}"></script>
+<script>
+// MAterial Date picker
+$('#dateExpense, #endDate').bootstrapMaterialDatePicker({ weekStart: 0, time: false });
+$('#timepicker').bootstrapMaterialDatePicker({ format: 'HH:mm', time: true, date: false });
+$('#date-format').bootstrapMaterialDatePicker({ format: 'dddd DD MMMM YYYY - HH:mm' });
+$('#min-date').bootstrapMaterialDatePicker({ format: 'DD/MM/YYYY HH:mm', minDate: new Date() });
 </script>
 <script th:inline="javascript">
     /*<![CDATA[*/

@@ -119,6 +119,25 @@
                                         <option th:each="customer : ${customers}" th:text="${customer.name}" th:value="${customer.customerId}"></option>
                                     </select>
                                 </div>
+                                <!-- Amount -->
+                                <label class="m-t-20" for="amount">Amount:</label>
+                                <div class="input-group">
+                                <input type="text" id="amount" name="amount" class="form-control" />
+                                </div>
+                                
+                                <!-- Date Expense -->
+                                <label class="m-t-20" for="dateExpense">Expense Date:</label>
+                                <div class="input-group">
+                                <input type="text" id="dateExpense" name="dateExpense" placeholder="yyyy-MM-dd" class="form-control" />
+                                </div>
+                                
+                                <!-- Budget Dropdown -->
+                                <label class="m-t-20" for="budget">Budget:</label>
+                                <div class="input-group">
+                                <select name="budgetId" id="budget" class="form-control">
+                                    <option th:each="budget : ${budgets}" th:text="${budget.budgetId} + ' - ' + ${budget.customer.name}" th:value="${budget.budgetId}"></option>
+                                </select>
+                                </div>
                                 <label class="m-t-20"><i class="ti-link"></i> Attachment</label>
                                 <div class="form-group">
                                     <div class="dropzone" id="my-dropzone"></div>
@@ -127,6 +146,7 @@
                                     <input type="checkbox" class="custom-control-input trigger-emails" th:id="googleDrive" th:field="*{googleDrive}">
                                     <label th:for="googleDrive" class="custom-control-label">Upload Docs to your Google Drive</label>
                                 </div>
+                                
                                 <button type="submit" class="btn btn-primary m-t-20">Create Lead</button>
                             </form>
                         </div>
@@ -154,25 +174,7 @@
                                 </div>
                             </form>
                         </div>
-                        <!-- Amount -->
-                        <label class="m-t-20" for="amount">Amount:</label>
-                        <div class="input-group">
-                        <input type="text" id="amount" name="amount" class="form-control" />
-                        </div>
                         
-                        <!-- Date Expense -->
-                        <label class="m-t-20" for="dateExpense">Expense Date:</label>
-                        <div class="input-group">
-                        <input type="text" id="dateExpense" name="dateExpense" placeholder="yyyy-MM-dd" class="form-control" />
-                        </div>
-                        
-                        <!-- Budget Dropdown -->
-                        <label class="m-t-20" for="budget">Budget:</label>
-                        <div class="input-group">
-                        <select name="budgetId" id="budget" class="form-control">
-                            <option th:each="budget : ${budgets}" th:text="${budget.budgetId} + ' - ' + ${budget.customer.name}" th:value="${budget.budgetId}"></option>
-                        </select>
-                        </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <button type="button" class="btn btn-primary" id="create" >Create</button>

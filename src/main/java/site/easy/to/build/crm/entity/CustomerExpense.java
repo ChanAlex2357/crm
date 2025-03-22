@@ -32,9 +32,6 @@ public class CustomerExpense {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "lead_id", nullable = false)
-    private Integer leadId;
-
     @ManyToOne
     @JoinColumn(name = "budget_id", nullable = false)
     private Budget budget;

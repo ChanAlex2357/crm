@@ -7,6 +7,9 @@
 <link rel="stylesheet" th:href="@{/css/bootstrap-wysihtml5.css}"/>
 <!-- Editable CSS -->
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+<link th:href="@{/css/bootstrap-material-datetimepicker.css}" rel="stylesheet">
+<link th:href="@{/css/bootstrap-datepicker.min.css}" rel="stylesheet" type="text/css"/>
+<link th:href="@{/css/jquery-clockpicker.min.css}" rel="stylesheet">
 <!-- Custom CSS -->
 <link th:href="@{/css/style.min.css}" rel="stylesheet">
 <!-- page css -->
@@ -116,6 +119,25 @@
                                         <option th:each="customer : ${customers}" th:text="${customer.name}" th:value="${customer.customerId}"></option>
                                     </select>
                                 </div>
+                                <!-- Amount -->
+                                <label class="m-t-20" for="amount">Amount:</label>
+                                <div class="input-group">
+                                <input type="text" id="amount" name="amount" class="form-control" />
+                                </div>
+                                
+                                <!-- Date Expense -->
+                                <label class="m-t-20" for="dateExpense">Expense Date:</label>
+                                <div class="input-group">
+                                <input type="text" id="dateExpense" name="dateExpense" placeholder="yyyy-MM-dd" class="form-control" />
+                                </div>
+                                
+                                <!-- Budget Dropdown -->
+                                <label class="m-t-20" for="budget">Budget:</label>
+                                <div class="input-group">
+                                <select name="budgetId" id="budget" class="form-control">
+                                    <option th:each="budget : ${budgets}" th:text="${budget.budgetId} + ' - ' + ${budget.customer.name}" th:value="${budget.budgetId}"></option>
+                                </select>
+                                </div>
                                 <label class="m-t-20"><i class="ti-link"></i> Attachment</label>
                                 <div class="form-group">
                                     <div class="dropzone" id="my-dropzone"></div>
@@ -124,6 +146,7 @@
                                     <input type="checkbox" class="custom-control-input trigger-emails" th:id="googleDrive" th:field="*{googleDrive}">
                                     <label th:for="googleDrive" class="custom-control-label">Upload Docs to your Google Drive</label>
                                 </div>
+                                
                                 <button type="submit" class="btn btn-primary m-t-20">Create Lead</button>
                             </form>
                         </div>
@@ -151,6 +174,7 @@
                                 </div>
                             </form>
                         </div>
+                        
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <button type="button" class="btn btn-primary" id="create" >Create</button>
@@ -195,21 +219,21 @@
 <script th:inline="javascript">
     var home = /*[[${home}]]*/ null;
 </script>
-<script th:src="@{/js/library/jquery-3.2.1.min.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/jquery-3.2.1.min.js}" type="text/javascript"></script>
 <!--    &lt;!&ndash; Bootstrap tether Core JavaScript &ndash;&gt;-->
-<script th:src="@{/js/library/popper.min.js}" type="text/javascript">></script>
-<script th:src="@{/js/library/bootstrap.min.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/popper.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/library/bootstrap.min.js}" type="text/javascript"></script>
 <!--    &lt;!&ndash; slimscrollbar scrollbar JavaScript &ndash;&gt;-->
-<script th:src="@{/js/library/perfect-scrollbar.jquery.min.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/perfect-scrollbar.jquery.min.js}" type="text/javascript"></script>
 <!--Wave Effects -->
-<script th:src="@{/js/library/waves.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/waves.js}" type="text/javascript"></script>
 <!--Menu sidebar -->
-<script th:src="@{/js/library/sidebarmenu.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/sidebarmenu.js}" type="text/javascript"></script>
 <!--stickey kit -->
 <script th:src="@{/js/library/sticky-kit.min.js}"></script>
-<script th:src="@{/js/library/jquery.sparkline.min.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/jquery.sparkline.min.js}" type="text/javascript"></script>
 <!--Custom JavaScript -->
-<script th:src="@{/js/library/custom.min.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/custom.min.js}" type="text/javascript"></script>
 <!-- Editable -->
 
 <script th:src="@{/js/library/wysihtml5-0.3.0.js}"></script>
@@ -221,6 +245,16 @@
         $('.textarea_editor').wysihtml5();
     });
 </script>
+
+<script th:src="@{/js/library/bootstrap-material-datetimepicker.js}"></script>
+<script th:src="@{/js/library/bootstrap-datepicker.min.js}"></script>
+<script>
+// MAterial Date picker
+$('#dateExpense, #endDate').bootstrapMaterialDatePicker({ weekStart: 0, time: false });
+$('#timepicker').bootstrapMaterialDatePicker({ format: 'HH:mm', time: true, date: false });
+$('#date-format').bootstrapMaterialDatePicker({ format: 'dddd DD MMMM YYYY - HH:mm' });
+$('#min-date').bootstrapMaterialDatePicker({ format: 'DD/MM/YYYY HH:mm', minDate: new Date() });
+</script>
 <script th:inline="javascript">
     /*<![CDATA[*/
 
@@ -230,6 +264,39 @@
 
     /*]]>*/
 </script>
+<script>
+    document.getElementById("customerId").addEventListener("change", function() {
+      var selectedCustomerId = this.value;
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/api/customer/budget/" + encodeURIComponent(selectedCustomerId), true);
+      xhr.setRequestHeader("Accept", "application/json");
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = JSON.parse(xhr.responseText);
+            console.log(response);
+          if (xhr.status === 200) {
+            var budgets = response.data;
+            var budgetSelect = document.getElementById("budget");
+            // clear current options
+            budgetSelect.innerHTML = "";
+            // add new options from the response
+            console.log(budgets);
+            budgets.forEach(function(budget) {
+              var option = document.createElement("option");
+              option.value = budget.budgetId;
+              option.text = budget.description;
+              budgetSelect.appendChild(option);
+            });
+          } else {
+            console.error("Failed to load budgets: " + xhr.status);
+            console.error(response.errors);
+            
+          }
+        }
+      };
+      xhr.send();
+    });
+  </script>
 <script th:src="@{/js/general-dropzone.js}" type="text/javascript"
         th:data-csrf-token="${_csrf.token}" th:data-csrf-header="${_csrf.headerName}"></script>
 </body>

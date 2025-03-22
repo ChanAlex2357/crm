@@ -48,9 +48,8 @@
   - [x] relation avec customer
   - [x] Creation de la table avec customer
 - [ ] Affichage
-  - [ ] formulaire d'insertion de budget pour les employer
-  - [ ] formulaire d'insertion pour le client
-  - [ ] traitement des erreurs de validations
+  - [x] formulaire d'insertion de budget pour les employer
+  - [] traitement des erreurs de validations
   - [ ] restriction pour chaque role
 - [ ] Metier
   - [ ] Creation du model customer_budget

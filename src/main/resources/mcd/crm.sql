@@ -239,6 +239,22 @@ CREATE TABLE customer_budget(
    FOREIGN KEY(customer_id) REFERENCES customer(customer_id)
 );
 
+CREATE TABLE trigger_ticket(
+   ticket_id INT,
+   subject VARCHAR(255) ,
+   status VARCHAR(100) ,
+   description TEXT,
+   priority VARCHAR(100) ,
+   created_at DATETIME,
+   customer_id INT NOT NULL,
+   employee_id INT NOT NULL,
+   manager_id INT NOT NULL,
+   PRIMARY KEY(ticket_id),
+   FOREIGN KEY(customer_id) REFERENCES customer(customer_id),
+   FOREIGN KEY(employee_id) REFERENCES Users(id),
+   FOREIGN KEY(manager_id) REFERENCES Users(id)
+);
+
 CREATE TABLE lead_action(
    id INT AUTO_INCREMENT,
    action VARCHAR(255) ,
@@ -246,6 +262,23 @@ CREATE TABLE lead_action(
    lead_id INT NOT NULL,
    PRIMARY KEY(id),
    FOREIGN KEY(lead_id) REFERENCES trigger_lead(lead_id)
+);
+
+CREATE TABLE customer_expense(
+   expense_id INT AUTO_INCREMENT,
+   date_expense DATE NOT NULL,
+   amount DECIMAL(15,2)   NOT NULL,
+   created_at DATETIME,
+   updated_at DATETIME,
+   ticket_id INT NOT NULL,
+   lead_id INT NOT NULL,
+   budget_id INT NOT NULL,
+   customer_id INT NOT NULL,
+   PRIMARY KEY(expense_id),
+   FOREIGN KEY(ticket_id) REFERENCES trigger_ticket(ticket_id),
+   FOREIGN KEY(lead_id) REFERENCES trigger_lead(lead_id),
+   FOREIGN KEY(budget_id) REFERENCES customer_budget(budget_id),
+   FOREIGN KEY(customer_id) REFERENCES customer(customer_id)
 );
 
 CREATE TABLE user_roles(

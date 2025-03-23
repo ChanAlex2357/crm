@@ -1,10 +1,14 @@
 package site.easy.to.build.crm.entity.api.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class AuthRequest {
-    String username;
-    String password;
-    String email;
+
+    @NotNull
+    private String username;
+    
+    @NotNull
+    private String password;
 }

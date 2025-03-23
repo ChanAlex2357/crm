@@ -7,7 +7,11 @@
 <link rel="stylesheet" th:href="@{/css/bootstrap-wysihtml5.css}"/>
 <!-- Editable CSS -->
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+<link th:href="@{/css/bootstrap-material-datetimepicker.css}" rel="stylesheet">
+<link th:href="@{/css/bootstrap-datepicker.min.css}" rel="stylesheet" type="text/css"/>
+<link th:href="@{/css/jquery-clockpicker.min.css}" rel="stylesheet">
 <!-- Custom CSS -->
+<link th:href="@{/css/bootstrap-wysihtml5.css}" rel="stylesheet">
 <link th:href="@{/css/style.min.css}" rel="stylesheet">
 <!-- page css -->
 <link th:href="@{/css/pages/inbox.css}" rel="stylesheet">
@@ -71,8 +75,9 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Create New Lead</h4>
-                            <form th:object="${lead}" th:action="@{/employee/lead/create}" enctype="multipart/form-data" id="email-form" method="post">
+                            <form th:object="${lead}" th:action="@{/employee/lead/create}" enctype="multipart/form-data" id="lead-form" method="post">
                                 <input type="hidden" id="allFiles" name="allFiles">
+                                <input type="hidden" id="alerts" name="alert[]">
                                 <label class="m-t-20" for="name">Name:</label>
                                 <div class="input-group">
                                     <input type="text" id="name" th:field="*{name}" class="form-control">
@@ -105,15 +110,34 @@
 
                                 <label class="m-t-20" for="employeeId">Assign Employee:</label>
                                 <div class="input-group">
-                                    <select name="employeeId" id="employeeId" class="form-control">
+                                    <select name="employeeId" id="employeeId" class="form-control" required>
                                         <option th:each="employee : ${employees}" th:text="${employee.username}" th:value="${employee.id}"></option>
                                     </select>
                                 </div>
 
                                 <label class="m-t-20" for="customerId">Customer:</label>
                                 <div class="input-group">
-                                    <select name="customerId" id="customerId" class="form-control">
+                                    <select name="customerId" id="customerId" class="form-control" required>
                                         <option th:each="customer : ${customers}" th:text="${customer.name}" th:value="${customer.customerId}"></option>
+                                    </select>
+                                </div>
+                                <!-- Amount -->
+                                <label class="m-t-20" for="amount">Amount:</label>
+                                <div class="input-group">
+                                <input type="text" id="amount" name="amount" required min="0"  class="form-control" />
+                                </div>
+                                
+                                <!-- Date Expense -->
+                                <label class="m-t-20" for="dateExpense">Expense Date:</label>
+                                <div class="input-group">
+                                <input type="text" id="dateExpense" name="dateExpense" required placeholder="yyyy-MM-dd" class="form-control" />
+                                </div>
+                                
+                                <!-- Budget Dropdown -->
+                                <label class="m-t-20" for="budget">Budget: <span class="font-weight-bold" id="limitation"></span></label>
+                                <div class="input-group">
+                                    <select name="budgetId" id="budget" class="form-control" required>
+                                        <option value="">Select customer's budget</option>
                                     </select>
                                 </div>
                                 <label class="m-t-20"><i class="ti-link"></i> Attachment</label>
@@ -123,6 +147,25 @@
                                 <div th:if="${hasGoogleDriveAccess}" class="col-md-5 m-b-15 custom-control custom-checkbox">
                                     <input type="checkbox" class="custom-control-input trigger-emails" th:id="googleDrive" th:field="*{googleDrive}">
                                     <label th:for="googleDrive" class="custom-control-label">Upload Docs to your Google Drive</label>
+                                </div>
+                                <!-- Bootstrap Modal -->
+                                <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="confirmationModalLabel">Confirm Amount</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div id="confirmations" class="mb-3"></div>
+                                                <p>Are you sure you want to proceed with this amount?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="confirmationModal">Cancel</button>
+                                                <button type="button" class="btn btn-primary" id="confirmSubmit">Confirm</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary m-t-20">Create Lead</button>
                             </form>
@@ -151,6 +194,7 @@
                                 </div>
                             </form>
                         </div>
+                        
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <button type="button" class="btn btn-primary" id="create" >Create</button>
@@ -195,23 +239,23 @@
 <script th:inline="javascript">
     var home = /*[[${home}]]*/ null;
 </script>
-<script th:src="@{/js/library/jquery-3.2.1.min.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/jquery-3.2.1.min.js}" type="text/javascript"></script>
 <!--    &lt;!&ndash; Bootstrap tether Core JavaScript &ndash;&gt;-->
-<script th:src="@{/js/library/popper.min.js}" type="text/javascript">></script>
-<script th:src="@{/js/library/bootstrap.min.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/popper.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/library/bootstrap.min.js}" type="text/javascript"></script>
 <!--    &lt;!&ndash; slimscrollbar scrollbar JavaScript &ndash;&gt;-->
-<script th:src="@{/js/library/perfect-scrollbar.jquery.min.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/perfect-scrollbar.jquery.min.js}" type="text/javascript"></script>
 <!--Wave Effects -->
-<script th:src="@{/js/library/waves.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/waves.js}" type="text/javascript"></script>
 <!--Menu sidebar -->
-<script th:src="@{/js/library/sidebarmenu.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/sidebarmenu.js}" type="text/javascript"></script>
 <!--stickey kit -->
 <script th:src="@{/js/library/sticky-kit.min.js}"></script>
-<script th:src="@{/js/library/jquery.sparkline.min.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/jquery.sparkline.min.js}" type="text/javascript"></script>
 <!--Custom JavaScript -->
-<script th:src="@{/js/library/custom.min.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/custom.min.js}" type="text/javascript"></script>
 <!-- Editable -->
-
+<script th:src="@{/js/library/moment.js}"></script>
 <script th:src="@{/js/library/wysihtml5-0.3.0.js}"></script>
 <script th:src="@{/js/library/bootstrap-wysihtml5.js}"></script>
 <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
@@ -220,6 +264,16 @@
     $(document).ready(function() {
         $('.textarea_editor').wysihtml5();
     });
+</script>
+
+<script th:src="@{/js/library/bootstrap-material-datetimepicker.js}"></script>
+<script th:src="@{/js/library/bootstrap-datepicker.min.js}"></script>
+<script>
+    // MAterial Date picker
+    $('#dateExpense').bootstrapMaterialDatePicker({ weekStart: 0, time: false });
+    $('#timepicker').bootstrapMaterialDatePicker({ format: 'HH:mm', time: true, date: false });
+    $('#date-format').bootstrapMaterialDatePicker({ format: 'dddd DD MMMM YYYY - HH:mm' });
+    $('#min-date').bootstrapMaterialDatePicker({ format: 'DD/MM/YYYY HH:mm', minDate: new Date() });
 </script>
 <script th:inline="javascript">
     /*<![CDATA[*/
@@ -230,7 +284,99 @@
 
     /*]]>*/
 </script>
-<script th:src="@{/js/general-dropzone.js}" type="text/javascript"
-        th:data-csrf-token="${_csrf.token}" th:data-csrf-header="${_csrf.headerName}"></script>
+
+<script th:inline="javascript">
+    var expenseSettings = /*[[${expenseSettings}]]*/ null;
+    console.info(expenseSettings)
+    var budget = {'amount':10000};
+    var budgets = []
+   
+    function checkExpenseAmount(amount) {
+        const confirmations = [];
+
+        const tauxAmount = (budget.amount * expenseSettings.taux) / 100
+        console.log("taux :: ");
+        console.log(tauxAmount);
+        
+        
+        if (amount > budget.amount) {
+            confirmations.push({'type':1,'title':'Taux d\'alert atteint','message':"Depense a atteint la limitation de taux d'alert de "+expenseSettings.taux+"%"});
+        }
+        if (amount > budget.amount) {
+            confirmations.push({'type':2,'title':'Depassement de budget','message':"Depense depasse la limite du budget : "+budget.amount});
+        }
+        return confirmations;
+    }
+
+    document.getElementById('budget').addEventListener('change' , function(event) {
+        const selectedValue = event.target.value;
+        budget = budgets.find(budget => budget.budgetId === parseInt(selectedValue));
+         
+        const limitationLabel = document.getElementById('limitation');
+        limitationLabel.innerHTML = ''+budget.amount
+    })
+
+    document.getElementById('lead-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const amountInput = document.querySelector('input[name="amount"]');
+        const amount = parseFloat(amountInput.value);
+
+        const confirmations = checkExpenseAmount(amount);
+        if (confirmations.length > 0) {
+            const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+            const confirmationsDiv = document.getElementById('confirmations');
+            confirmations.forEach(confirmation => {
+                confirmationsDiv.innerHTML = `<div class="alert alert-warning"><h4>${confirmation.title}</h4><div>${confirmation.message}</div></div>`
+            })
+            
+            console.log(confirmations);
+            
+            modal.show();
+            document.getElementById('confirmSubmit').addEventListener('click', () => {
+                this.submit();
+            });
+        } else {
+            this.submit();
+        }
+        
+    });
+
+
+    
+    function renderBudgets(){
+        var budgetSelect = document.getElementById("budget");
+        // clear current options
+        budgetSelect.innerHTML = "<option>Select customer's budget</option>";
+        // add new options from the response
+        budgets.forEach(function(budget) {
+            var option = document.createElement("option");
+            option.value = budget.budgetId;
+            option.text = budget.description;
+            budgetSelect.appendChild(option);
+        });
+    }
+    // Dynamic Budget Data
+    document.getElementById("customerId").addEventListener("change", function() {
+      var selectedCustomerId = this.value;
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/api/customer/budget/" + encodeURIComponent(selectedCustomerId), true);
+      xhr.setRequestHeader("Accept", "application/json");
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = JSON.parse(xhr.responseText);
+          if (xhr.status === 200) {
+            budgets = response.data;
+            renderBudgets()
+          } else {
+            console.error("Failed to load budgets: " + xhr.status);
+            console.error(response.errors);
+            
+          }
+        }
+      };
+      xhr.send();
+    });
+</script>
+<script th:src="@{/js/general-dropzone.js}" type="text/javascript" th:data-csrf-token="${_csrf.token}" th:data-csrf-header="${_csrf.headerName}"></script>
 </body>
 </html>

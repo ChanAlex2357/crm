@@ -46,6 +46,9 @@ public class ImportController {
         try {
             MultipartFile file = importForm.getFile();
             importBody =  importService.importData(file, leadImportService, ',');
+            if (importBody == null) {
+                throw new Exception("Error while importing data");
+            }
             // Verification des erreurs
             if (importBody.getImportException().hasErrors()) {
                 throw importBody.getImportException();
@@ -58,6 +61,9 @@ public class ImportController {
             }
         } catch (AdminImportException e) {
             model.addAttribute("errors", e);
+            model.addAttribute("importData",new ImportData("lead"));
+            return "import/import-lead";
+        } catch ( Exception exc){
             model.addAttribute("importData",new ImportData("lead"));
             return "import/import-lead";
         }

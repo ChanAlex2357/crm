@@ -1,4 +1,4 @@
-package site.easy.to.build.crm.entity.api;
+package site.easy.to.build.crm.entity.api.response;
 
 import lombok.Data;
 import site.easy.to.build.crm.enums.ApiResponseStatus;

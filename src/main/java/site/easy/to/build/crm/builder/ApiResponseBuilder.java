@@ -1,6 +1,6 @@
 package site.easy.to.build.crm.builder;
 
-import site.easy.to.build.crm.entity.api.ApiResponse;
+import site.easy.to.build.crm.entity.api.response.ApiResponse;
 import site.easy.to.build.crm.enums.ApiResponseStatus;
 public class ApiResponseBuilder {
     public static ApiResponse success(String message , Object data){

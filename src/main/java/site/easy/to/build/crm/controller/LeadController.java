@@ -5,8 +5,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityManager;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +15,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import site.easy.to.build.crm.entity.*;
+import site.easy.to.build.crm.entity.settings.ExpenseSettings;
 import site.easy.to.build.crm.entity.settings.LeadEmailSettings;
 import site.easy.to.build.crm.google.model.calendar.EventDisplay;
 import site.easy.to.build.crm.google.model.drive.GoogleDriveFolder;
@@ -31,7 +33,8 @@ import site.easy.to.build.crm.google.service.gmail.GoogleGmailApiService;
 import site.easy.to.build.crm.service.budget.BudgetService;
 import site.easy.to.build.crm.service.customer.CustomerService;
 import site.easy.to.build.crm.service.drive.GoogleDriveFileService;
-import site.easy.to.build.crm.service.expense.CustomerExpenseService;
+import site.easy.to.build.crm.service.expense.ExpenseService;
+import site.easy.to.build.crm.service.expense.ExpenseSettingsService;
 import site.easy.to.build.crm.service.file.FileService;
 import site.easy.to.build.crm.service.lead.LeadActionService;
 import site.easy.to.build.crm.service.lead.LeadService;
@@ -42,22 +45,19 @@ import site.easy.to.build.crm.util.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jakarta.validation.Validator;
-
 @Controller
 @RequestMapping("/employee/lead")
+@Slf4j
 public class LeadController {
 
     @Autowired
-    private Validator validator;
-
+    private ExpenseSettingsService expenseSettingsService;
     private final LeadService leadService;
     private final AuthenticationUtils authenticationUtils;
     private final UserService userService;
@@ -77,9 +77,8 @@ public class LeadController {
     private BudgetService budgetService;
 
     @Autowired
-    private CustomerExpenseService expenseService;
+    private ExpenseService expenseService;
 
-    @Autowired
     public LeadController(LeadService leadService, AuthenticationUtils authenticationUtils, UserService userService, CustomerService customerService,
                           LeadActionService leadActionService, GoogleCalendarApiService googleCalendarApiService, FileService fileService,
                           GoogleDriveApiService googleDriveApiService, GoogleDriveFileService googleDriveFileService, FileUtil fileUtil,
@@ -178,6 +177,8 @@ public class LeadController {
             return "error/account-inactive";
         }
         populateModelAttributes(model, authentication, user);
+        ExpenseSettings expenseSettings = expenseSettingsService.getLatestExpenseSettings();
+        model.addAttribute("expenseSettings", expenseSettings);
         model.addAttribute("lead", new Lead());
         return "lead/create-lead";
     }
@@ -236,25 +237,7 @@ public class LeadController {
             populateModelAttributes(model, authentication, user);
             return "lead/create-lead";
         }
-        // Create expense
-        CustomerExpense expense = new CustomerExpense();
-        expense.setAmount(BigDecimal.valueOf(amount));
-        expense.setDateExpense(dateExpense);
-        expense.setLead(createdLead);
-        expense.setCustomer(customer);
-        expense.setBudget(budget);
-
-        Set<ConstraintViolation<CustomerExpense>> violations = validator.validate(expense);
-        if (!violations.isEmpty()) {
-            for (ConstraintViolation<CustomerExpense> violation : violations) {
-                bindingResult.rejectValue(violation.getPropertyPath().toString(), "", violation.getMessage());
-            }
-            User user = userService.findById(userId);
-            populateModelAttributes(model, authentication, user);
-            return "lead/create-lead";
-        }
-
-        expenseService.createExpense(expense);
+        expenseService.createCustomerExpense(amount, dateExpense, budget, customer, createdLead);
 
         fileUtil.saveFiles(allFiles, createdLead);
 

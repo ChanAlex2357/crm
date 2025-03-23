@@ -33,6 +33,7 @@
                     </a>
                     <ul class="collapse">
                         <li><a th:href="${home + 'employee/settings/google-services'}">Google setting</a></li>
+                        <li><a th:href="${home + 'manager/settings/expense'}">Google setting</a></li>
                         <li>
                             <a href="javascript:void(0)" class="has-arrow">Notification setting</a>
                             <ul class="collapse">
@@ -97,15 +98,8 @@
                     </a>
                     <ul class="collapse">
                         <li><a th:href="${home + 'employee/budget/show-all'}">All budget</a></li>
-                        <li><a th:href="${home + 'employee/budget/create'}">Create budget</a></li>
-                    </ul>
-                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)">
-                        <i class="fas fa-credit-card"></i>
-                        <span class="hide-menu">Expenses</span>
-                    </a>
-                    <ul class="collapse">
                         <li><a th:href="${home + 'employee/expense/show-all'}">All expenses</a></li>
-                        <li><a th:href="${home + 'employee/expense/create'}">Create expense</a></li>
+                        <li><a th:href="${home + 'employee/budget/create'}">Create budget</a></li>
                     </ul>
                 </li>
                 <li class="nav-small-cap">--- Customers</li>

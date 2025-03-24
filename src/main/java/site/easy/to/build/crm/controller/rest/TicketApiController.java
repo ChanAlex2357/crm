@@ -8,19 +8,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import site.easy.to.build.crm.builder.ApiResponseBuilder;
 import site.easy.to.build.crm.entity.api.response.ApiResponse;
-import site.easy.to.build.crm.service.ticket.TicketService;
+import site.easy.to.build.crm.service.ticket.TicketServiceImpl;
 
 @RestController
 @RequestMapping("/api/tickets")
 public class TicketApiController {
     
     @Autowired
-    private TicketService ticketService;
+    private TicketServiceImpl ticketService;
 
     @GetMapping
     public ResponseEntity<ApiResponse> getTicketSummary() {
         try {
-            var tickets = ticketService.findAll();
+            var tickets = ticketService.getAllTicketCpl();
             ApiResponse apiResponse = ApiResponseBuilder.success("Total des tickets", tickets);
             return ResponseEntity.ok(apiResponse);
         } catch (Exception e) {

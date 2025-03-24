@@ -1,6 +1,5 @@
 package site.easy.to.build.crm.service.role;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.easy.to.build.crm.entity.Role;
 import site.easy.to.build.crm.repository.RoleRepository;
@@ -13,7 +12,6 @@ public class RoleServiceImpl implements RoleService{
 
     private final RoleRepository roleRepository;
 
-    @Autowired
     public RoleServiceImpl(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }

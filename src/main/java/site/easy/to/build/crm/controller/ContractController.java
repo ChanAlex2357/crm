@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -64,7 +63,6 @@ public class ContractController {
     private final ContractEmailSettingsService contractEmailSettingsService;
     private final GoogleGmailApiService googleGmailApiService;
 
-    @Autowired
     public ContractController(ContractService contractService, AuthenticationUtils authenticationUtils, UserService userService,
                               CustomerService customerService, LeadService leadService, GoogleDriveApiService googleDriveApiService,
                               FileUtil fileUtil, FileService fileService, GoogleDriveFileService googleDriveFileService,
@@ -133,7 +131,7 @@ public class ContractController {
     @GetMapping("/customer-contracts/{customerId}")
     public String getCustomerContracts(Model model, @PathVariable("customerId") int customerId, Authentication authentication) {
         List<Contract> contracts = contractService.getCustomerContracts(customerId);
-        //TODO after activate the login by customer do the authorization check
+        // TODO after activate the login by customer do the authorization check  */
         model.addAttribute("contracts", contracts);
         return "contract/contracts";
     }

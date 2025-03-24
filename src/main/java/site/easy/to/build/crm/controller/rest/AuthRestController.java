@@ -3,7 +3,6 @@ package site.easy.to.build.crm.controller.rest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import site.easy.to.build.crm.builder.ApiResponseBuilder;
 import site.easy.to.build.crm.entity.Role;

@@ -4,7 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -48,8 +47,7 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
     public final AuthenticationUtils authenticationUtils;
     public final RoleService roleService;
     private final Environment environment;
-
-    @Autowired
+    
     public OAuthLoginSuccessHandler(OAuthUserService oAuthUserService, UserService userService, UserProfileService userProfileService,
                                     OAuth2AuthorizedClientService authorizedClientService, AuthenticationUtils authenticationUtils, RoleService roleService, Environment environment) {
         this.oAuthUserService = oAuthUserService;
@@ -67,7 +65,7 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         // Get the registration ID of the OAuth2 provider
         String googleClientId = environment.getProperty("spring.security.oauth2.client.registration.google.client-id");
         String googleClientSecret = environment.getProperty("spring.security.oauth2.client.registration.google.client-secret");
-        boolean x = true;
+        // boolean x = true;
         if (StringUtils.isEmpty(googleClientId) || StringUtils.isEmpty(googleClientSecret)) {
             response.sendRedirect("/error-page");
             return;

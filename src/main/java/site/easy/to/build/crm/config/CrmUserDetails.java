@@ -27,11 +27,9 @@ public class CrmUserDetails implements UserDetailsService {
 
     @Autowired
     HttpSession session;
-    @Autowired
-    private HttpServletResponse request;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        String crmUsername, password;
+        String password;
         User user = userRepository.findByUsername(username).size() == 1  ? userRepository.findByUsername(username).get(0) : null;
         List<GrantedAuthority> authorities;
         if(user == null) {
@@ -50,8 +48,8 @@ public class CrmUserDetails implements UserDetailsService {
             password = user.getPassword();
             session.setAttribute("loggedInUserId", user.getId());
             authorities = user.getRoles().stream()
-                    .map(role -> new SimpleGrantedAuthority(role.getName()))
-                    .collect(Collectors.toList());
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
         }
 
         return new org.springframework.security.core.userdetails.User(username,password,authorities);

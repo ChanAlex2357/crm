@@ -8,19 +8,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import site.easy.to.build.crm.builder.ApiResponseBuilder;
 import site.easy.to.build.crm.entity.api.response.ApiResponse;
-import site.easy.to.build.crm.service.lead.LeadService;
+import site.easy.to.build.crm.service.lead.LeadServiceImpl;
 
 @RestController
 @RequestMapping("/api/leads")
 public class LeadApiController {
     
     @Autowired
-    private LeadService leadService;
+    private LeadServiceImpl leadService;
 
     @GetMapping
     public ResponseEntity<ApiResponse> getLeadSummary() {
         try {
-            var leads = leadService.findAll();
+            var leads = leadService.getAllLeadsCpl();
             ApiResponse apiResponse = ApiResponseBuilder.success("Total des leads", leads);
             return ResponseEntity.ok(apiResponse);
         } catch (Exception e) {

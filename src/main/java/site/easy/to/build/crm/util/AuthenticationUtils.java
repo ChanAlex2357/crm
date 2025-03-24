@@ -1,7 +1,5 @@
 package site.easy.to.build.crm.util;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,7 +23,6 @@ public class AuthenticationUtils {
     private final UserDetailsService crmUserDetails;
     private final UserDetailsService customerUserDetails;
 
-    @Autowired
     public AuthenticationUtils(UserService userService, OAuthUserService oAuthUserService, CustomerLoginInfoService customerLoginInfoService,
                                UserDetailsService crmUserDetails, UserDetailsService customerUserDetails) {
         this.userService = userService;

@@ -129,3 +129,57 @@ FROM
     LEFT JOIN trigger_ticket t ON ce.ticket_id = t.ticket_id
     LEFT JOIN customer_budget cb ON ce.budget_id = cb.budget_id
     LEFT JOIN currency cur ON cb.currency = cur.id;
+
+CREATE OR REPLACE VIEW lead_cpl AS
+SELECT 
+    l.lead_id,
+    l.name as lead_name,
+    l.status as lead_status,
+    l.phone as lead_phone,
+    l.meeting_id,
+    l.google_drive,
+    l.google_drive_folder_id,
+    l.created_at,
+    -- Customer information
+    c.customer_id,
+    c.name as customer_name,
+    c.email as customer_email,
+    -- Manager information
+    m.id as manager_id,
+    m.username as manager_username,
+    m.email as manager_email,
+    -- Employee information
+    e.id as employee_id,
+    e.username as employee_username,
+    e.email as employee_email
+FROM 
+    trigger_lead l
+    LEFT JOIN customer c ON l.customer_id = c.customer_id
+    LEFT JOIN users m ON l.user_id = m.id
+    LEFT JOIN users e ON l.employee_id = e.id;
+
+CREATE OR REPLACE VIEW ticket_cpl AS
+SELECT 
+    t.ticket_id,
+    t.subject,
+    t.description,
+    t.status as ticket_status,
+    t.priority,
+    t.created_at,
+    -- Customer information
+    c.customer_id,
+    c.name as customer_name,
+    c.email as customer_email,
+    -- Manager information
+    m.id as manager_id,
+    m.username as manager_username,
+    m.email as manager_email,
+    -- Employee information
+    e.id as employee_id,
+    e.username as employee_username,
+    e.email as employee_email
+FROM 
+    trigger_ticket t
+    LEFT JOIN customer c ON t.customer_id = c.customer_id
+    LEFT JOIN users m ON t.manager_id = m.id
+    LEFT JOIN users e ON t.employee_id = e.id;

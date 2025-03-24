@@ -494,7 +494,6 @@ public class LeadController {
         if(!AuthorizationUtil.checkIfUserAuthorized(employee,loggedInUser)) {
             return "error/access-denied";
         }
-
         leadService.delete(lead);
         return "redirect:/employee/lead/created-leads";
     }

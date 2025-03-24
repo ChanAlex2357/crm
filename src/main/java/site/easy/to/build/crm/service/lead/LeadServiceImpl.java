@@ -1,10 +1,13 @@
 package site.easy.to.build.crm.service.lead;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import site.easy.to.build.crm.entity.Customer;
+import site.easy.to.build.crm.entity.Expense;
 import site.easy.to.build.crm.repository.LeadRepository;
+import site.easy.to.build.crm.service.expense.ExpenseService;
 import site.easy.to.build.crm.entity.Lead;
 
 import java.util.List;
@@ -13,6 +16,9 @@ import java.util.List;
 public class LeadServiceImpl implements LeadService {
 
     private final LeadRepository leadRepository;
+
+    @Autowired
+    private ExpenseService expenseService;
 
     public LeadServiceImpl(LeadRepository leadRepository) {
         this.leadRepository = leadRepository;
@@ -49,6 +55,7 @@ public class LeadServiceImpl implements LeadService {
 
     @Override
     public void delete(Lead lead) {
+        Expense eexpense = expenseService.getExpenseByLead(lead.getLeadId());
         leadRepository.delete(lead);
     }
 

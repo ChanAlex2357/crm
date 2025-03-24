@@ -140,5 +140,13 @@ public class ExpenseService {
         return expenseRepository.findByBudgetBudgetId(budget_id);
     }
 
+    public List<Expense> getExpenseByLead(int leadId) {
+        return expenseRepository.findByLeadLeadId(leadId);
+    }
+
+    public List<Expense> getExpenseByTicket(int ticketId) {
+        return expenseRepository.findByTicketTicketId(ticketId);
+    }
+
 }
 

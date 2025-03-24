@@ -276,7 +276,7 @@ $('#min-date').bootstrapMaterialDatePicker({ format: 'DD/MM/YYYY HH:mm', minDate
         console.log(tauxAmount);
         
         
-        if (amount > budget.amount) {
+        if (amount >= tauxAmount) {
             confirmations.push({'type':1,'title':'Taux d\'alert atteint','message':"Depense a atteint la limitation de taux d'alert de "+expenseSettings.taux+"%"});
         }
         if (amount > budget.amount) {

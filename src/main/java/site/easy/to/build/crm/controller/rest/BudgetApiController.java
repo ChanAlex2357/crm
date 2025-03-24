@@ -16,10 +16,9 @@ import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.service.budget.BudgetService;
 
 @RestController
-@CrossOrigin(origins = "*" , allowedHeaders = "*")
 @RequestMapping("/api/customer/budget")
 @Slf4j
-public class ApiBudgetController {
+public class BudgetApiController {
     
     @Autowired
     BudgetService   budgetService;

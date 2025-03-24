@@ -81,6 +81,7 @@ public class ExpenseService {
         expense.setBudget(budget);
         createExpense(expense);
         List<ExpenseAlert> alerts = expenseSettingsService.checkExpenseAlerts(expense);
+        System.out.println(alerts);
         for (ExpenseAlert expenseAlert : alerts) {
             expenseAlertService.createExpenseAlert(expenseAlert);
         }

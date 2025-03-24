@@ -135,6 +135,7 @@ public class TicketController {
         model.addAttribute("customers",customers);
         model.addAttribute("ticket", new Ticket());
         ExpenseSettings expenseSettings = expenseSettingsService.getLatestExpenseSettings();
+        System.out.println(expenseSettings);
         model.addAttribute("expenseSettings", expenseSettings);
         return "ticket/create-ticket";
     }

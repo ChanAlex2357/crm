@@ -59,4 +59,8 @@ public class Expense {
     @JoinColumn(name = "lead_id")
     private Lead lead;
 
+
+    public double getDoubleAmount() {
+        return amount.doubleValue();
+    }
 }

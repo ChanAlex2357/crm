@@ -27,7 +27,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/employee/expense")
-public class CustomerExpenseController {
+public class ExpenseController {
 
     @Autowired
     private TicketServiceImpl ticketService;

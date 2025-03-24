@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import site.easy.to.build.crm.entity.AlertType;
-import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.entity.Expense;
 import site.easy.to.build.crm.entity.ExpenseAlert;
 import site.easy.to.build.crm.repository.ExpenseAlertRepository;

@@ -60,15 +60,21 @@ public class ExpenseSettingsService {
     }
 
     public List<ExpenseAlert> checkExpenseAlerts(Expense expense) {
-        List<ExpenseAlert> alerts = new ArrayList<>();
+        ArrayList<ExpenseAlert> alerts = new ArrayList<>();
         try {
-            alerts.add(checkAlertSeuil(expense));
+            ExpenseAlert expenseAlert = checkAlertSeuil(expense);
+            if (expenseAlert != null) {
+                alerts.add(expenseAlert);
+            }
         } catch (NullPointerException e) {
             log.info("La depense n'ateint pas le taux d'alerte");
         }
 
         try {
-            alerts.add(checkBudgetDepassement(expense));
+            ExpenseAlert expenseAlert = checkBudgetDepassement(expense);
+            if (expenseAlert != null) {
+                alerts.add(expenseAlert);
+            }
         } catch (NullPointerException e) {
             log.info("La depense n'ateint pas la limite du budget");
         }

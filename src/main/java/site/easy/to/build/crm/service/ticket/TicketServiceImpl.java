@@ -8,6 +8,7 @@ import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.repository.TicketRepository;
 import site.easy.to.build.crm.service.expense.ExpenseService;
 import site.easy.to.build.crm.entity.Ticket;
+import site.easy.to.build.crm.entity.dto.TicketDTO;
 
 import java.util.List;
 
@@ -98,5 +99,9 @@ public class TicketServiceImpl implements TicketService{
     @Override
     public void deleteAllByCustomer(Customer customer) {
         ticketRepository.deleteAllByCustomer(customer);
+    }
+
+    public List<TicketDTO> getAllTicketCpl(){
+        return ticketRepository.findAllTicketsWithDetails();
     }
 }

@@ -5,10 +5,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import site.easy.to.build.crm.entity.Customer;
-import site.easy.to.build.crm.entity.Expense;
 import site.easy.to.build.crm.repository.LeadRepository;
 import site.easy.to.build.crm.service.expense.ExpenseService;
 import site.easy.to.build.crm.entity.Lead;
+import site.easy.to.build.crm.entity.dto.LeadDTO;
 
 import java.util.List;
 
@@ -104,5 +104,9 @@ public class LeadServiceImpl implements LeadService {
     @Override
     public long countByCustomerId(int customerId) {
         return leadRepository.countByCustomerCustomerId(customerId);
+    }
+
+    public List<LeadDTO> getAllLeadsCpl(){
+        return  leadRepository.findAllLeadsWithDetails();
     }
 }

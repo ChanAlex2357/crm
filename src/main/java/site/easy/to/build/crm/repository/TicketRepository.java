@@ -34,9 +34,52 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
 
     void deleteAllByCustomer(Customer customer);
 
-    @Query(value = "SELECT * FROM ticket_cpl", nativeQuery = true)
+    @Query(value = """
+            SELECT 
+                t.ticket_id as ticketId,
+                t.subject as subject,
+                t.ticket_status as status,
+                t.description as description,
+                t.priority as priority,
+                t.created_at as createdAt,
+                -- Customer information
+                t.customer_id as customerId,
+                t.customer_name as customerName,
+                t.customer_email as customerEmail,
+                -- Manager information
+                t.manager_id as managerId,
+                t.manager_username as managerUsername,
+                t.manager_email as managerEmail,
+                -- Employee information
+                t.employee_id as employeeId,
+                t.employee_username as employeeUsername,
+                t.employee_email as employeeEmail
+            FROM ticket_cpl t
+            """, nativeQuery = true)
     List<TicketDTO> findAllTicketsWithDetails();
     
-    @Query(value = "SELECT * FROM ticket_cpl WHERE customer_id = :customerId", nativeQuery = true)
+    @Query(value = """
+            SELECT 
+                t.ticket_id as ticketId,
+                t.subject as subject,
+                t.description as description,
+                t.status as ticketStatus,
+                t.priority as priority,
+                t.created_at as createdAt,
+                -- Customer information
+                c.customer_id as customerId,
+                c.name as customerName,
+                c.email as customerEmail,
+                -- Manager information
+                m.id as managerId,
+                m.username as managerUsername,
+                m.email as managerEmail,
+                -- Employee information
+                e.id as employeeId,
+                e.username as employeeUsername,
+                e.email as employeeEmail
+            FROM ticket_cpl t
+            WHERE customer_id = :customerId
+            """, nativeQuery = true)
     List<TicketDTO> findTicketsByCustomerId(Integer customerId);
 }

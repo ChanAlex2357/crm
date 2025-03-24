@@ -10,7 +10,11 @@ import site.easy.to.build.crm.builder.ApiResponseBuilder;
 import site.easy.to.build.crm.entity.Expense;
 import site.easy.to.build.crm.entity.TotalExpense;
 import site.easy.to.build.crm.entity.api.response.ApiResponse;
+import site.easy.to.build.crm.entity.dto.ExpenseTotalDTO;
+import site.easy.to.build.crm.repository.UserRepository;
 import site.easy.to.build.crm.service.expense.ExpenseService;
+import site.easy.to.build.crm.service.user.UserService;
+import site.easy.to.build.crm.service.user.UserServiceImpl;
 
 import java.util.List;
 
@@ -24,7 +28,7 @@ public class ExpenseApiController {
     @GetMapping
     public ResponseEntity<ApiResponse> getExpenseSummary() {
         try {
-            List<Expense> expenses = expenseService.getAllExpenses();
+            List<ExpenseTotalDTO> expenses = expenseService.getAllExpensesWithDetails();
             TotalExpense totalExpense = new TotalExpense(expenses);
             ApiResponse apiResponse = ApiResponseBuilder.success("Total de depenses",totalExpense);
     

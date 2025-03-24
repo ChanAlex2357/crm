@@ -185,7 +185,7 @@ public class TicketController {
         if (budget == null) {
             return createTicketErrorRedirection(model, authentication, manager);
         }
-        expenseService.createCustomerExpense(amount, dateExpense, budget, customer,ticket);
+        expenseService.createExpense(amount, dateExpense, budget, customer,ticket);
         
         return "redirect:/employee/ticket/assigned-tickets";
     }

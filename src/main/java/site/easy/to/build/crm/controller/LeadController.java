@@ -237,7 +237,7 @@ public class LeadController {
             populateModelAttributes(model, authentication, user);
             return "lead/create-lead";
         }
-        expenseService.createCustomerExpense(amount, dateExpense, budget, customer, createdLead);
+        expenseService.createExpense(amount, dateExpense, budget, customer, createdLead);
 
         fileUtil.saveFiles(allFiles, createdLead);
 

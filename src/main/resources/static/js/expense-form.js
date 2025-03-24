@@ -70,7 +70,7 @@ function renderBudgets(){
 document.getElementById("customerId").addEventListener("change", function() {
     var selectedCustomerId = this.value;
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/customer/budget/" + encodeURIComponent(selectedCustomerId), true);
+    xhr.open("GET", "/api/budgets/" + encodeURIComponent(selectedCustomerId), true);
     xhr.setRequestHeader("Accept", "application/json");
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {

@@ -16,7 +16,7 @@ import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.service.budget.BudgetService;
 
 @RestController
-@RequestMapping("/api/customer/budget")
+@RequestMapping("/api/budgets")
 @Slf4j
 public class BudgetApiController {
     

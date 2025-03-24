@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/config/taux")
+@RequestMapping("/api/configs")
 public class ExpenseConfigController {
     
     @Autowired
     private ExpenseSettingsService expenseSettingsService;
 
-    @PostMapping("/update")
+    @PostMapping("/update/taux")
     public ResponseEntity<ApiResponse> postMethodName(@RequestBody ConfigTauxRequest configTauxRequest) {
         System.out.println(configTauxRequest);
         try {

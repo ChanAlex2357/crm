@@ -1,10 +1,12 @@
 package site.easy.to.build.crm.service.ticket;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.repository.TicketRepository;
+import site.easy.to.build.crm.service.expense.ExpenseService;
 import site.easy.to.build.crm.entity.Ticket;
 
 import java.util.List;
@@ -14,6 +16,8 @@ public class TicketServiceImpl implements TicketService{
 
     private final TicketRepository ticketRepository;
 
+    @Autowired
+    private ExpenseService expenseService;
     public TicketServiceImpl(TicketRepository ticketRepository) {
         this.ticketRepository = ticketRepository;
     }
@@ -30,6 +34,11 @@ public class TicketServiceImpl implements TicketService{
 
     @Override
     public void delete(Ticket ticket) {
+        try {
+            expenseService.deleteExpenseOf(ticket);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Le ticket n'a pas d'expense");
+        }
         ticketRepository.delete(ticket);
     }
 

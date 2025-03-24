@@ -55,7 +55,11 @@ public class LeadServiceImpl implements LeadService {
 
     @Override
     public void delete(Lead lead) {
-        Expense eexpense = expenseService.getExpenseByLead(lead.getLeadId());
+        try {
+            expenseService.deleteExpenseOf(lead);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Le lead n'a pas d'expense");
+        }
         leadRepository.delete(lead);
     }
 

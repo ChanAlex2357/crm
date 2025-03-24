@@ -148,5 +148,21 @@ public class ExpenseService {
         return expenseRepository.findByTicketTicketId(ticketId);
     }
 
+    public void deleteExpenseOf(Lead lead){
+        try {
+            Expense eexpense = getExpenseByLead(lead.getLeadId()).get(0);
+            deleteExpense(eexpense.getExpenseId());
+        } catch (IndexOutOfBoundsException e) {
+            throw new IllegalArgumentException("Le lead n'a pas d'expense");
+        }
+    }
+    public void deleteExpenseOf(Ticket ticket){
+        try {
+            Expense eexpense = getExpenseByTicket(ticket.getTicketId()).get(0);
+            deleteExpense(eexpense.getExpenseId());
+        } catch (IndexOutOfBoundsException e) {
+            throw new IllegalArgumentException("Le lead n'a pas d'expense");
+        }
+    }
 }
 

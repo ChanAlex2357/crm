@@ -77,6 +77,6 @@ ALTER TABLE expense_alert DROP COLUMN expense ;
 CREATE TABLE expense_settings(
    id INT AUTO_INCREMENT,
    taux DECIMAL(15,2)  ,
-   date_taux VARCHAR(100) ,
+   date_taux DATETIME NOT NULL ,
    PRIMARY KEY(id)
 );

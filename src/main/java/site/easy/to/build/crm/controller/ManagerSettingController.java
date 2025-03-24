@@ -45,11 +45,7 @@ public class ManagerSettingController {
         if (!AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER")){
             return "error/access-denied";
         }
-        ExpenseSettings latestSettings = expenseSettingsService.getLatestExpenseSettings();
-        if (latestSettings.getTaux() != settings.getTaux()) {
-            settings.setDateTaux(LocalDate.now());
-            expenseSettingsService.createExpenseSettings(settings);
-        }
+        expenseSettingsService.updateExpenseSettings(settings);
         return "redirect:/manager/settings/expense";
     }
 }

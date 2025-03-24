@@ -1,9 +1,9 @@
 package site.easy.to.build.crm.service.expense;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.ObjectUtils.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.entity.Expense;
 import site.easy.to.build.crm.entity.ExpenseAlert;
+import site.easy.to.build.crm.entity.api.request.ConfigTauxRequest;
 import site.easy.to.build.crm.entity.settings.ExpenseSettings;
 import site.easy.to.build.crm.repository.ExpenseSettingsRepository;
 import site.easy.to.build.crm.service.alert.AlertTypeService;
@@ -36,11 +37,18 @@ public class ExpenseSettingsService {
     }
     
     public ExpenseSettings createExpenseSettings(ExpenseSettings settings) {
+        if (settings.getDateTaux() == null) {
+            settings.setDateTaux(LocalDateTime.now());
+        }
         return expenseSettingsRepository.save(settings);
     }
     
     public ExpenseSettings updateExpenseSettings(ExpenseSettings settings) {
-        return expenseSettingsRepository.save(settings);
+        ExpenseSettings latestSettings = getLatestExpenseSettings();
+        if (latestSettings.getTaux() != settings.getTaux()) {
+            return createExpenseSettings(settings);
+        }
+        return settings;
     }
     
     public void deleteExpenseSettings(int id) {
@@ -86,6 +94,11 @@ public class ExpenseSettingsService {
             return expenseAlert;
         }
         return null;
+    }
+
+    public ExpenseSettings updateExpenseSettings(ConfigTauxRequest configTauxRequest) {
+        ExpenseSettings settings = new ExpenseSettings(configTauxRequest);
+        return updateExpenseSettings(settings);
     }
 }
 

@@ -92,10 +92,9 @@ public class ExpenseSettingsService {
         return null;
     }
 
-
     public ExpenseAlert checkBudgetDepassement(Expense expense) {
         Budget budget = expense.getBudget();
-        if (expense.getAmount().doubleValue() > budget.getAmount().doubleValue()) {
+        if (expense.getAmount().doubleValue() > budget.getReste().doubleValue()) {
             ExpenseAlert expenseAlert = expenseAlertService.getExpenseAlert(expense,null,alertTypeService.getAlertTypeById(2), "Le montant de la depense a depasse la limite du budget de "+budget.getAmount()+"");
             return expenseAlert;
         }

@@ -18,7 +18,9 @@ import site.easy.to.build.crm.entity.Expense;
 import site.easy.to.build.crm.entity.ExpenseAlert;
 import site.easy.to.build.crm.entity.Lead;
 import site.easy.to.build.crm.entity.Ticket;
+import site.easy.to.build.crm.entity.dto.ExpenseTotalDTO;
 import site.easy.to.build.crm.repository.ExpenseRepository;
+import site.easy.to.build.crm.service.budget.BudgetService;
 
 @Service
 public class ExpenseService {
@@ -33,6 +35,9 @@ public class ExpenseService {
 
     @Autowired
     private ExpenseRepository expenseRepository;
+
+    @Autowired
+    private BudgetService budgetService;
     
     @Transactional
     // Create a new expense
@@ -68,29 +73,37 @@ public class ExpenseService {
     }
 
     @Transactional
-    public Expense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,Ticket ticket) {
+    public Expense createExpense(double amount,String dateExpense,Budget budget,Customer customer,Ticket ticket) {
         Expense expense = new Expense();
         expense.setTicket(ticket);
-        return createCustomerExpense(amount, dateExpense, budget, customer, expense);
+        return createExpense(amount, dateExpense, budget, customer, expense);
     }
     @Transactional
-    public Expense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,Expense expense) {
+    public Expense createExpense(double amount,String dateExpense,Budget budget,Customer customer,Expense expense) {
         expense.setAmount(BigDecimal.valueOf(amount));
         expense.setDateExpense(dateExpense);
         expense.setCustomer(customer);
         expense.setBudget(budget);
+
         createExpense(expense);
         List<ExpenseAlert> alerts = expenseSettingsService.checkExpenseAlerts(expense);
         System.out.println(alerts);
         for (ExpenseAlert expenseAlert : alerts) {
             expenseAlertService.createExpenseAlert(expenseAlert);
         }
-        
+
+        // Calculer le reste du budget
+        double reste = budget.getAmount().doubleValue() - expense.getDoubleAmount();
+        if (reste < 0) {reste = 0;}
+        budget.setReste(BigDecimal.valueOf(reste));
+        // Mettre a jour le budget
+        budgetService.updateBudget(budget);
+
         return expense;
     }
 
     @Transactional
-    public Expense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,Expense expense,BindingResult bindingResult) {
+    public Expense createExpense(double amount,String dateExpense,Budget budget,Customer customer,Expense expense,BindingResult bindingResult) {
     
         Set<ConstraintViolation<Expense>> violations = validator.validate(expense);
         if (!violations.isEmpty()) {
@@ -102,14 +115,30 @@ public class ExpenseService {
         if (bindingResult.hasErrors()) {
             return null;
         }
-        return createCustomerExpense(amount, dateExpense, budget, customer, expense);
+        return createExpense(amount, dateExpense, budget, customer, expense);
     }
     
     @Transactional
-    public Expense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,Lead lead) {
+    public Expense createExpense(double amount,String dateExpense,Budget budget,Customer customer,Lead lead) {
         Expense expense = new Expense();
         expense.setLead(lead);
-        return createCustomerExpense(amount, dateExpense, budget, customer, expense);
+        return createExpense(amount, dateExpense, budget, customer, expense);
     }
+
+    public List<ExpenseTotalDTO> getAllExpensesWithDetails() {
+        return expenseRepository.findAllExpensesWithDetails();
+    }
+    
+    public List<ExpenseTotalDTO> getExpensesByCustomerId(Integer customerId) {
+        return expenseRepository.findExpensesByCustomerId(customerId);
+    }
+
+    public List<Expense> getExpenseByBudget(Budget budget){
+        return getExpenseByBudget(budget.getBudgetId());
+    }
+    public List<Expense> getExpenseByBudget(int budget_id){
+        return expenseRepository.findByBudgetBudgetId(budget_id);
+    }
+
 }
 

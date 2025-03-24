@@ -2,9 +2,11 @@ package site.easy.to.build.crm.repository;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.Lead;
+import site.easy.to.build.crm.entity.dto.LeadDTO;
 
 import java.util.List;
 
@@ -31,4 +33,10 @@ public interface LeadRepository extends JpaRepository<Lead, Integer> {
     long countByCustomerCustomerId(int customerId);
 
     void deleteAllByCustomer(Customer customer);
+
+    @Query(value = "SELECT * FROM lead_cpl", nativeQuery = true)
+    List<LeadDTO> findAllLeadsWithDetails();
+    
+    @Query(value = "SELECT * FROM lead_cpl WHERE customer_id = :customerId", nativeQuery = true)
+    List<LeadDTO> findLeadsByCustomerId(Integer customerId);
 }

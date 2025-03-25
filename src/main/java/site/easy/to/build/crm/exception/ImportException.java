@@ -1,11 +1,29 @@
 package site.easy.to.build.crm.exception;
 
+import java.util.ArrayList;
 public class ImportException extends RuntimeException {
-    public ImportException(Exception source,int line) {
-        this(source.getMessage(), line);
+    private final int line;
+    private ArrayList<String> errors;
+    public ImportException(int line) {
+        this.line = line;
+        errors = new ArrayList<String>();
     }
-    public ImportException(String source,int line) {
-        super("<span class=\"font-weight-bold\"> Ligne "+line+" : </span> "+source);
+
+    public String getHtml() {
+        String header = """
+            <table>
+                <tbody>
+                """;
+        String footer = """
+                </tbody>
+            </table>
+        """;
+        String body = "<tr><span class=\"font-weight-bold\">"+line+"</span></tr><tr><ul>";
+        for (String error : errors) {
+            body += "<li>"+error+"</li>";
+        }
+        body += "</ul></tr>";
+        String html = header + body + footer;
+        return html;
     }
-    
 }

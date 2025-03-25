@@ -6,6 +6,7 @@ import java.util.List;
 public class AdminImportException extends RuntimeException {
     
     private List<ImportException> errors ;
+    private int currentLine = 1;
     public AdminImportException() {
         super("Error while importing data");
         setErrors(new ArrayList<>());
@@ -27,8 +28,8 @@ public class AdminImportException extends RuntimeException {
     public void addError(ImportException error) {
         errors.add(error);
     }
-    public void addError(String message , int line) {
-        addError(new ImportException(message, line));
+    public void addError(String message) {
+        // addError(new ImportException(message, this.currentLine++));
     }
 
     public boolean hasErrors() {

@@ -18,6 +18,8 @@ import site.easy.to.build.crm.exception.AdminImportException;
 import site.easy.to.build.crm.service.csv.LeadImportService;
 import site.easy.to.build.crm.service.csv.general.AdminImportService;
 import site.easy.to.build.crm.service.lead.LeadServiceImpl;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 @RequestMapping("/employee/import")
@@ -38,6 +40,15 @@ public class ImportController {
         return "import/form";
 
     }
+
+    @PostMapping
+    public String postMethodName(@ModelAttribute ImportFormData formData) {
+        System.out.println(formData.getCustomerFile().getOriginalFilename());
+        System.out.println(formData.getCustomerDataFile().getOriginalFilename());
+        
+        return "redirect:/";
+    }
+    
 
     @PostMapping("/import/lead")
     public String handleImport(@ModelAttribute ImportData importForm, Model model) {

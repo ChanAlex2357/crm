@@ -57,7 +57,7 @@ CREATE TABLE expense_alert(
    budget_amount DECIMAL(15,2)  ,
    taux DECIMAL(15,2)  ,
    message TEXT,
-   expense DECIMAL(15,2)  ,
+   expense_amount DECIMAL(15,2)  ,
    date_alert DATE NOT NULL,
    status INT,
    budget_id INT NOT NULL,
@@ -68,10 +68,6 @@ CREATE TABLE expense_alert(
    FOREIGN KEY(expense_id) REFERENCES customer_expense(expense_id),
    FOREIGN KEY(alert_type_id) REFERENCES alert_type(id)
 );
-
-
-ALTER TABLE expense_alert ADD COLUMN expense_amount DECIMAL(15,2);
-ALTER TABLE expense_alert DROP COLUMN expense ;
 
 
 CREATE TABLE expense_settings(

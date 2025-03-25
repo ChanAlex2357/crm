@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class ImportFormData {
     MultipartFile customerFile;
-    MultipartFile customerDataFile;
+    MultipartFile expenseFile;
 }

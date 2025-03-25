@@ -64,23 +64,23 @@ public class LeadMapping extends CsvMapping{
     private LocalDateTime  createdAt;
 
 
-    @Override
-    public Lead transfer() {
-        Lead lead = new Lead(
-            getName(),
-            getStatus(),
-            getPhone(),
-            getMeetingId(),
-            getGoogleDrive() == '1' ? Boolean.TRUE : Boolean.FALSE,
-            getGoogleDriveFolderId(),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            getCreatedAt()
-        );
-        return lead;
-    }
+    // @Override
+    // public Lead transfer() {
+    //     Lead lead = new Lead(
+    //         getName(),
+    //         getStatus(),
+    //         getPhone(),
+    //         getMeetingId(),
+    //         getGoogleDrive() == '1' ? Boolean.TRUE : Boolean.FALSE,
+    //         getGoogleDriveFolderId(),
+    //         null,
+    //         null,
+    //         null,
+    //         null,
+    //         null,
+    //         null,
+    //         getCreatedAt()
+    //     );
+    //     return lead;
+    // }
 }

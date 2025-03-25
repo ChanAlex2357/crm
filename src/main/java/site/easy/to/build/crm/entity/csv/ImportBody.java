@@ -26,7 +26,7 @@ public class ImportBody {
         return importException.hasErrors();
     }
     public void addError(String message , int line) {
-        importException.addError(message,line);
+        // importException.addError(message,line);
     } 
 
     public void addError(ImportException error) {

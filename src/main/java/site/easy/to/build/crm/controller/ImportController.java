@@ -1,30 +1,15 @@
 package site.easy.to.build.crm.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import site.easy.to.build.crm.entity.csv.datamanager.CrmFilesFormData;
-import site.easy.to.build.crm.entity.csv.form.CrmFiles;
-import site.easy.to.build.crm.entity.csv.results.ImportMapFilesCsvResult;
-import site.easy.to.build.crm.service.csv.CSVImporter;
-import site.easy.to.build.crm.service.csv.ImportCsvManager;
+import site.easy.to.build.crm.entity.csv.CrmFiles;
 
 
 @Controller
 @RequestMapping("/employee/import")
 public class ImportController {
-    @Autowired
-    private CSVImporter csvImporter;
-
-    @Autowired
-    private CrmFilesFormData dataManager;
-
     @GetMapping
     public String importForm(Model model) {
         model.addAttribute("importData",new CrmFiles());
@@ -32,16 +17,16 @@ public class ImportController {
 
     }
 
-    @PostMapping
-    public String postMethodName(@ModelAttribute CrmFiles formData,RedirectAttributes redirectAttributes) {
-        ImportMapFilesCsvResult importResults =  csvImporter.importData(dataManager,formData);
-        if (importResults.hasErrors()) {
-            redirectAttributes.addAttribute("importErrors",importResults);
-            return "";
-        }
-        redirectAttributes.addAttribute("importMessage","Donnee importer avec success");
-        return "redirect:/employee/import/form";
-    }
+    // @PostMapping
+    // public String postMethodName(@ModelAttribute CrmFiles formData,RedirectAttributes redirectAttributes) {
+    //     ImportMapFilesCsvResult importResults =  csvImporter.importData(dataManager,formData);
+    //     if (importResults.hasErrors()) {
+    //         redirectAttributes.addAttribute("importErrors",importResults);
+    //         return "";
+    //     }
+    //     redirectAttributes.addAttribute("importMessage","Donnee importer avec success");
+    //     return "redirect:/employee/import/form";
+    // }
     
 
     // @PostMapping("/import/lead")

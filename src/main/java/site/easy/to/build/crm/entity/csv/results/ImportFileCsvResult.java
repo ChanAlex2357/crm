@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
-import site.easy.to.build.crm.enums.ImportErrorStatus;
 import site.easy.to.build.crm.exception.AdminImportException;
 import site.easy.to.build.crm.exception.ImportException;
 

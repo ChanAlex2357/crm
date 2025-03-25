@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.User;
+import site.easy.to.build.crm.service.customer.CustomerService;
 import site.easy.to.build.crm.service.customer.CustomerServiceImpl;
 import site.easy.to.build.crm.service.user.UserServiceImpl;
 import site.easy.to.build.crm.util.AuthenticationUtils;
@@ -34,15 +35,14 @@ public class BudgetController {
     @Autowired
     private BudgetService budgetService;
 
-
     private final UserServiceImpl userService;
 
     private final AuthenticationUtils authenticationUtils;
 
-    private final CustomerServiceImpl customerService;
+    @Autowired
+    private CustomerService customerService;
 
-    BudgetController(CustomerServiceImpl customerServiceImpl, AuthenticationUtils authenticationUtils, UserServiceImpl userServiceImpl) {
-        this.customerService = customerServiceImpl;
+    BudgetController( AuthenticationUtils authenticationUtils, UserServiceImpl userServiceImpl) {
         this.authenticationUtils = authenticationUtils;
         this.userService = userServiceImpl;
     }

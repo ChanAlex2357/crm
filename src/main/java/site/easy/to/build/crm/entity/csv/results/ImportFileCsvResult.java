@@ -33,7 +33,7 @@ public class ImportFileCsvResult<T>{
     public String getErrorHtml() {
         String html ="";
         for( ImportException exception : exceptions.getErrors().values()){
-            html += exception.getHtml();
+            html += exception.getHtml("FILE : "+getFileSource().getName()+" errors");
         }
         return html;
     }

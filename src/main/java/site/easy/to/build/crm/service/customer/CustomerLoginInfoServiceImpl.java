@@ -1,12 +1,13 @@
 package site.easy.to.build.crm.service.customer;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.transaction.Transactional;
 import site.easy.to.build.crm.repository.CustomerLoginInfoRepository;
 import site.easy.to.build.crm.entity.CustomerLoginInfo;
 
 @Service
+@Transactional
 public class CustomerLoginInfoServiceImpl implements CustomerLoginInfoService {
 
     private final CustomerLoginInfoRepository customerLoginInfoRepository;
@@ -37,6 +38,7 @@ public class CustomerLoginInfoServiceImpl implements CustomerLoginInfoService {
     }
 
     @Override
+    @Transactional
     public void delete(CustomerLoginInfo customerLoginInfo) {
         customerLoginInfoRepository.delete(customerLoginInfo);
     }

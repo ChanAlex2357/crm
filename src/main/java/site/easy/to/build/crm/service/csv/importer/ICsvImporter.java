@@ -10,5 +10,4 @@ public interface ICsvImporter<T,G> {
     public ImportFileCsvResult<T> importData(MultipartFile file);
     public void transfer(G mapping , T entity,ImportException exception);
     public void validation(T entity , ImportException exception);
-    public T save(T entity,ImportException exception);
 }   

@@ -27,12 +27,14 @@ public class ImportException extends RuntimeException {
     public void setErrorStatus(ImportErrorStatus errorStatus) {
         this.errorStatus = errorStatus;
     }
-    public String getHtml() {
+    public String getHtml(String title) {
         if (errors.size() == 0) {
             return "";
         }
-        String body = """
-                """;
+        if (title == null || title.length() == 0) {
+            title = "File import error";
+        }
+        String body = "<h3> "+title+" </h3>";
             body += "<tr><span class=\"font-weight-bold\">"+line+"</span></tr><tr><ul>";
                 for (String error : errors) {
                     if (error == null || error.length() == 0) {

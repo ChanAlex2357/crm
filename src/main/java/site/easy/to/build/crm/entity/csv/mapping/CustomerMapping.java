@@ -9,7 +9,6 @@ import com.opencsv.bean.CsvDate;
 
 import lombok.Getter;
 import site.easy.to.build.crm.entity.Customer;
-import site.easy.to.build.crm.entity.csv.CsvMapping;
 
 @Getter
 public class CustomerMapping extends CsvMapping {

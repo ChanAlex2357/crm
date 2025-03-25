@@ -7,7 +7,6 @@ import com.opencsv.bean.CsvDate;
 
 import lombok.Getter;
 import site.easy.to.build.crm.entity.Lead;
-import site.easy.to.build.crm.entity.csv.CsvMapping;
 
 @Getter
 public class LeadMapping extends CsvMapping{

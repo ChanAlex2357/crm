@@ -1,4 +1,4 @@
-package site.easy.to.build.crm.entity.csv;
+package site.easy.to.build.crm.entity.csv.form;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import site.easy.to.build.crm.entity.csv.mapping.CustomerMapping;
+import site.easy.to.build.crm.entity.csv.providers.ImportDataProvider;
 import site.easy.to.build.crm.service.csv.CustomerImportService;
 
 public class CrmFilesFormData implements IFilesFormData{

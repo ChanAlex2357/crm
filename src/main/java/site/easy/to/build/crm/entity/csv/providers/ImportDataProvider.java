@@ -1,4 +1,4 @@
-package site.easy.to.build.crm.entity.csv;
+package site.easy.to.build.crm.entity.csv.providers;
 
 import org.springframework.web.multipart.MultipartFile;
 import lombok.Data;

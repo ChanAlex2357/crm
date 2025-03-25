@@ -30,4 +30,11 @@ public class ImportFileCsvResult<T>{
     public ImportException getImportException(int line){
         return exceptions.getOrCreate(line);
     }
+    public String getErrorHtml() {
+        String html ="";
+        for( ImportException exception : exceptions.getErrors().values()){
+            html += exception.getHtml();
+        }
+        return html;
+    }
 }

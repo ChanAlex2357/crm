@@ -7,8 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-
+import site.easy.to.build.crm.controller.CustomerEmailSettingController;
 import lombok.extern.slf4j.Slf4j;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.CustomerLoginInfo;
@@ -25,6 +24,8 @@ import site.easy.to.build.crm.util.EmailTokenUtils;
 @Service
 @Slf4j
 public class CustomerImportService  implements ICsvImporter<Customer,CustomerMapping> {
+
+    private final CustomerEmailSettingController customerEmailSettingController;
 
     // -- Services utilitaires pour customer --
     @Autowired
@@ -45,8 +46,12 @@ public class CustomerImportService  implements ICsvImporter<Customer,CustomerMap
     @Autowired
     private ConstrainValidator<Customer> constrainValidator;
 
-    // - Fonctions importation de donnee
+    CustomerImportService(CustomerEmailSettingController customerEmailSettingController) {
+        this.customerEmailSettingController = customerEmailSettingController;
+    }
 
+    // - Fonctions importation de donnee
+    @Transactional
     public ImportFileCsvResult<Customer> importData(MultipartFile file){
         // Prepare the result
         ImportFileCsvResult<Customer> result = new ImportFileCsvResult<Customer>(file);
@@ -54,20 +59,31 @@ public class CustomerImportService  implements ICsvImporter<Customer,CustomerMap
 
         int line = 1;
         for (CustomerMapping customerMapping : csvRecords) {
-            ImportException exception = result.getImportException(++line);
+            ImportException exception = result.getImportException(line++);
             Customer customer = new Customer(); // Cree une instance
-            transfer(customerMapping, customer); // Transferer les donnee csv dans l'instance
+            transfer(customerMapping, customer,exception); // Transferer les donnee csv dans l'instance
             validation(customer, exception);
-            Customer createdCustomer = save(customer, exception);
-            result.addData(createdCustomer);
+            if (!result.hasErrors()) {
+                Customer createdCustomer = save(customer, exception);
+                result.addData(createdCustomer);
+            }
         }
         return result;
     }
 
     @Override
-    public void transfer(CustomerMapping mapping, Customer entity) {
+    @Transactional
+    public void transfer(CustomerMapping mapping, Customer entity,ImportException exception) {
+
         entity.setName(mapping.getName());
         entity.setEmail(mapping.getEmail());
+        entity.setCountry("Madagascar");
+        if (customerService.findByEmail(mapping.getEmail()) != null) {
+            // exception.addError("Customer with email : "+mapping.getEmail()+" already exist");
+        }
+        else if (customerService.findByName(mapping.getName()) != null){
+            // exception.addError("Customer with name : "+mapping.getName()+" already exist");
+        }
     }
 
     @Transactional
@@ -79,6 +95,7 @@ public class CustomerImportService  implements ICsvImporter<Customer,CustomerMap
         String token = EmailTokenUtils.generateToken();
         customerLoginInfo.setToken(token);
         customerLoginInfo.setPasswordSet(false);
+        
         CustomerLoginInfo customerLoginInfo1 = customerProfileService.save(customerLoginInfo);
         
         // Assossiation du customer et son login

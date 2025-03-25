@@ -20,7 +20,11 @@ public class BudgetService {
     @Autowired
     private DeviseService deviseService;
     // Create a new Budget
+    @Transactional
     public Budget createBudget(Budget budget) {
+        if (budget.getCurrency() == null) {
+            
+        }
         return budgetRepository.save(budget);
     }
     

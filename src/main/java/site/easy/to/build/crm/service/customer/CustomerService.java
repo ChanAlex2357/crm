@@ -12,7 +12,9 @@ public interface CustomerService {
     public List<Customer> findByUserId(int userId);
 
     public Customer findByEmail(String email);
-
+    
+    public Customer findByName(String name);
+    
     public List<Customer> findAll();
 
     public Customer save(Customer customer);

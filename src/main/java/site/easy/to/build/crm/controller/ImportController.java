@@ -1,32 +1,62 @@
 package site.easy.to.build.crm.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import jakarta.transaction.Transactional;
+import site.easy.to.build.crm.entity.Budget;
+import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.csv.CrmFiles;
+import site.easy.to.build.crm.entity.csv.results.ImportFileCsvResult;
+import site.easy.to.build.crm.entity.csv.results.ImportMapFilesCsvResult;
+import site.easy.to.build.crm.service.csv.importer.BudgetImportService;
+import site.easy.to.build.crm.service.csv.importer.CustomerImportService;
 
 
 @Controller
 @RequestMapping("/employee/import")
 public class ImportController {
+
+    @Autowired
+    private CustomerImportService customerImportService;
+
+    @Autowired
+    private BudgetImportService budgetImportService;
+
     @GetMapping
-    public String importForm(Model model) {
+    public String importForm(Model model,RedirectAttributes redirectAttributes) {
         model.addAttribute("importData",new CrmFiles());
         return "import/form";
 
     }
 
-    // @PostMapping
-    // public String postMethodName(@ModelAttribute CrmFiles formData,RedirectAttributes redirectAttributes) {
-    //     ImportMapFilesCsvResult importResults =  csvImporter.importData(dataManager,formData);
-    //     if (importResults.hasErrors()) {
-    //         redirectAttributes.addAttribute("importErrors",importResults);
-    //         return "";
-    //     }
-    //     redirectAttributes.addAttribute("importMessage","Donnee importer avec success");
-    //     return "redirect:/employee/import/form";
-    // }
+    @PostMapping
+    @Transactional
+    public String postMethodName(@ModelAttribute CrmFiles formData,RedirectAttributes redirectAttributes) {
+        ImportMapFilesCsvResult importResults =  new ImportMapFilesCsvResult();
+
+        // Importation des customers
+        ImportFileCsvResult<Customer> customerResult = customerImportService.importData(formData.getCustomerFile());
+        importResults.addImportFileCsvResult(customerResult);
+
+        // Importation de budgets
+        ImportFileCsvResult<Budget> budgetResult = budgetImportService.importData(formData.getBudgetFile());
+        importResults.addImportFileCsvResult(budgetResult);
+
+        if (importResults.hasErrors()) {
+            redirectAttributes.addFlashAttribute("importErrors",importResults.getErrorHtml());
+            return "redirect:/employee/import";
+        }
+        redirectAttributes.addFlashAttribute("importMessage","Donnee importer avec success");
+        return "redirect:/employee/import";
+    }
+    
     
 
     // @PostMapping("/import/lead")

@@ -22,4 +22,11 @@ public class ImportMapFilesCsvResult {
       }
       return false;
    }
+   public String getErrorHtml(){
+      String html = "";
+      for (ImportFileCsvResult<?> importFileCsvResult : fileCsvResults) {
+         html += importFileCsvResult.getErrorHtml();
+      }
+      return html;
+   }
 }

@@ -13,4 +13,13 @@ public class ImportMapFilesCsvResult {
    public void addImportFileCsvResult(ImportFileCsvResult fileResult){
       getFileCsvResults().add(fileResult);
    }
+
+   public boolean hasErrors(){
+      for (ImportFileCsvResult importFileCsvResult : fileCsvResults) {
+         if (importFileCsvResult.hasErrors()) {
+            return true;
+         }
+      }
+      return false;
+   }
 }

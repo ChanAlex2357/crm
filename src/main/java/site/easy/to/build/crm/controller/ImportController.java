@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import site.easy.to.build.crm.entity.Lead;
@@ -18,6 +19,7 @@ import site.easy.to.build.crm.service.csv.general.AdminImportService;
 import site.easy.to.build.crm.service.lead.LeadServiceImpl;
 
 @Controller
+@RequestMapping("/employee/import")
 public class ImportController {
     
     @Autowired
@@ -29,12 +31,9 @@ public class ImportController {
     @Autowired
     private AdminImportService importService;
 
-    @GetMapping("/import/{base}")
-    public String importForm(Model model,@PathVariable("base") String base) {
-        if(base == null) {
-            return "redirect:/error-404";
-        }
-        model.addAttribute("importData",new ImportData(base));
+    @GetMapping("/import")
+    public String importForm(Model model) {
+        model.addAttribute("importData",new ImportData());
         return "import/import-lead";
 
     }

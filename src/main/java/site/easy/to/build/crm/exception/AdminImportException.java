@@ -27,7 +27,7 @@ public class AdminImportException extends RuntimeException {
     public ImportException getImportException(int line){
         return getErrors().get(line);
     }
-    public ImportException getImporExceptionOrElseInstanciate(int line){
+    public ImportException getOrCreate(int line){
         ImportException e = getImportException(line);
         if (e == null) {
             e = new ImportException(line,this.errorStatus);

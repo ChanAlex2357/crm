@@ -1,28 +1,21 @@
 package site.easy.to.build.crm.controller;
 
 import jakarta.persistence.EntityManager;
-import jakarta.validation.constraints.NotNull;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import site.easy.to.build.crm.entity.*;
-import site.easy.to.build.crm.entity.settings.ExpenseSettings;
 import site.easy.to.build.crm.entity.settings.TicketEmailSettings;
 import site.easy.to.build.crm.google.service.acess.GoogleAccessService;
 import site.easy.to.build.crm.google.service.gmail.GoogleGmailApiService;
-import site.easy.to.build.crm.service.budget.BudgetService;
 import site.easy.to.build.crm.service.customer.CustomerService;
-import site.easy.to.build.crm.service.expense.ExpenseService;
-import site.easy.to.build.crm.service.expense.ExpenseSettingsService;
 import site.easy.to.build.crm.service.settings.TicketEmailSettingsService;
 import site.easy.to.build.crm.service.ticket.TicketService;
 import site.easy.to.build.crm.service.user.UserService;
@@ -49,15 +42,8 @@ public class TicketController {
     private final GoogleGmailApiService googleGmailApiService;
     private final EntityManager entityManager;
 
-    @Autowired
-    private BudgetService budgetService;
 
     @Autowired
-    private ExpenseService expenseService;
-
-    @Autowired
-    private ExpenseSettingsService expenseSettingsService;
-
     public TicketController(TicketService ticketService, AuthenticationUtils authenticationUtils, UserService userService, CustomerService customerService,
                             TicketEmailSettingsService ticketEmailSettingsService, GoogleGmailApiService googleGmailApiService, EntityManager entityManager) {
         this.ticketService = ticketService;
@@ -102,10 +88,9 @@ public class TicketController {
         int userId = authenticationUtils.getLoggedInUserId(authentication);
         List<Ticket> tickets = ticketService.findManagerTickets(userId);
         model.addAttribute("tickets",tickets);
-        
         return "ticket/my-tickets";
     }
-    
+
     @GetMapping("/assigned-tickets")
     public String showEmployeeTicket(Model model, Authentication authentication) {
         int userId = authenticationUtils.getLoggedInUserId(authentication);
@@ -122,7 +107,7 @@ public class TicketController {
         }
         List<User> employees = new ArrayList<>();
         List<Customer> customers;
-        
+
         if(AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER")) {
             employees = userService.findAll();
             customers = customerService.findAll();
@@ -130,26 +115,19 @@ public class TicketController {
             employees.add(user);
             customers = customerService.findByUserId(user.getId());
         }
-        
+
         model.addAttribute("employees",employees);
         model.addAttribute("customers",customers);
         model.addAttribute("ticket", new Ticket());
-        ExpenseSettings expenseSettings = expenseSettingsService.getLatestExpenseSettings();
-        model.addAttribute("expenseSettings", expenseSettings);
         return "ticket/create-ticket";
     }
-    
-    @Transactional
+
     @PostMapping("/create-ticket")
     public String createTicket(@ModelAttribute("ticket") @Validated Ticket ticket, BindingResult bindingResult, @RequestParam("customerId") int customerId,
                                @RequestParam Map<String, String> formParams, Model model,
-                               @RequestParam("employeeId") int employeeId, Authentication authentication,
-                               @RequestParam("amount") @NotNull double amount,
-                               @RequestParam("dateExpense") @NotNull String dateExpense,
-                               @RequestParam("budgetId") int budgetId
-                               ) {
+                               @RequestParam("employeeId") int employeeId, Authentication authentication) {
 
-                                   int userId = authenticationUtils.getLoggedInUserId(authentication);
+        int userId = authenticationUtils.getLoggedInUserId(authentication);
         User manager = userService.findById(userId);
         if(manager == null) {
             return "error/500";
@@ -158,7 +136,20 @@ public class TicketController {
             return "error/account-inactive";
         }
         if(bindingResult.hasErrors()) {
-            return createTicketErrorRedirection(model,authentication,manager);
+            List<User> employees = new ArrayList<>();
+            List<Customer> customers;
+
+            if(AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER")) {
+                employees = userService.findAll();
+                customers = customerService.findAll();
+            } else {
+                employees.add(manager);
+                customers = customerService.findByUserId(manager.getId());
+            }
+
+            model.addAttribute("employees",employees);
+            model.addAttribute("customers",customers);
+            return "ticket/create-ticket";
         }
 
         User employee = userService.findById(employeeId);
@@ -180,30 +171,7 @@ public class TicketController {
 
         ticketService.save(ticket);
 
-        Budget budget = budgetService.getBudgetById(budgetId);
-        if (budget == null) {
-            return createTicketErrorRedirection(model, authentication, manager);
-        }
-        expenseService.createCustomerExpense(amount, dateExpense, budget, customer,ticket);
-        
         return "redirect:/employee/ticket/assigned-tickets";
-    }
-
-    private String createTicketErrorRedirection(Model model,Authentication authentication,User manager){
-        List<User> employees = new ArrayList<>();
-            List<Customer> customers;
-
-            if(AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER")) {
-                employees = userService.findAll();
-                customers = customerService.findAll();
-            } else {
-                employees.add(manager);
-                customers = customerService.findByUserId(manager.getId());
-            }
-
-            model.addAttribute("employees",employees);
-            model.addAttribute("customers",customers);
-            return "ticket/create-ticket";
     }
 
     @GetMapping("/update-ticket/{id}")

@@ -1,5 +1,6 @@
 package site.easy.to.build.crm.entity;
 
+import jakarta.mail.Folder;
 import jakarta.persistence.*;
 
 @Entity

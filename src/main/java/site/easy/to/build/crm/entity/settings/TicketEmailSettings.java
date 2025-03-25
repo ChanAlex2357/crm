@@ -1,6 +1,7 @@
 package site.easy.to.build.crm.entity.settings;
 
 import jakarta.persistence.*;
+import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.CustomerLoginInfo;
 import site.easy.to.build.crm.entity.EmailTemplate;
 import site.easy.to.build.crm.entity.User;

@@ -58,6 +58,11 @@ public class ExpenseService {
         if(!expenseRepository.existsById(id)){
             throw new RuntimeException("Expense not found with id: " + id);
         }
+        Expense e= getExpenseById(id);
+        List<ExpenseAlert> alerts = e.getAlerts();
+        for (ExpenseAlert alert : alerts) {
+            expenseAlertService.deleteExpenseAlert(alert.getAlertId());
+        }
         expenseRepository.deleteById(id);
     }
     

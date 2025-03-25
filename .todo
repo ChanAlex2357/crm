@@ -53,3 +53,51 @@
   - [ ] restriction pour chaque role
 - [ ] Metier
   - [ ] Creation du model customer_budget
+
+## Modification Lead et Ticket
+
+- [x] Debug
+  - [x] Controller de depenses
+- [ ] Modification Lead
+  - [ ] NewApp
+    - [ ] Affichage
+      - [x] Page Liste des lead
+      - [x] boutton redirection depuis le dashboard
+      - [x] boutton de suppression
+      - [x] boutton de modification
+      - [x] Page de modification
+        - [x] Champ Prix depense
+    - [x] Metier
+      - [x] Recuperation des donnees
+        - [x] Creation model de donnee Lead
+        - [x] Cibler l'api Spring Boot
+        - [x] retourner la reponse api
+      - [x] Controller pour afficher la page liste
+      - [x] Passer la liste des leads
+      - [x] Controller de suppression
+        - [x] Envoyer une requete de suppression
+      - [x] Controller de modification
+  - [x] ExitingApp
+    - [x] Bdd
+      - [x] Vue LeadCpl
+    - [x] Metier
+      - [x] Controller envoie de donnee
+        - [x] Native query
+        - [x] Model DTO
+        - [x] Envoie ResponseApi
+        - [x] Test Postman LeadCpl
+      - [x] Controller recepion de requete de suppresion
+        - [x] Recupere le lead associer
+        - [x] Delete by service
+        - [x] Recupere la depense associer
+        - [x] Supprimer la depense
+          - [x] Suppression de l'alert de la depense
+      - [ ] Controller reception de requete de modification de prix ( ref , refTable , montant)
+        - [ ] recuperer la ref et extraite la depense
+        - [ ] Modefier le prix
+        - [ ] Controller le prix modifier
+        - [ ] Enregistrer la modification
+
+## Generation de donnee
+
+## Prototype import de donnee

@@ -121,7 +121,7 @@ SELECT
     -- Currency information
     cur.id as currency_id,
     cur.libelle as currency_name,
-    cur.val as currency_value
+    cur.val as currency_value,
 FROM 
     customer_expense ce
     LEFT JOIN customer c ON ce.customer_id = c.customer_id
@@ -151,12 +151,14 @@ SELECT
     -- Employee information
     e.id as employee_id,
     e.username as employee_username,
-    e.email as employee_email
+    e.email as employee_email,
+    ce.amount as expense
 FROM 
     trigger_lead l
     LEFT JOIN customer c ON l.customer_id = c.customer_id
     LEFT JOIN users m ON l.user_id = m.id
-    LEFT JOIN users e ON l.employee_id = e.id;
+    LEFT JOIN users e ON l.employee_id = e.id
+    JOIN customer_expense ce on ce.lead_id = l.lead_id;
 
 CREATE OR REPLACE VIEW ticket_cpl AS
 SELECT 
@@ -177,9 +179,12 @@ SELECT
     -- Employee information
     e.id as employee_id,
     e.username as employee_username,
-    e.email as employee_email
+    e.email as employee_email,
+    -- Expense information
+    ce.amount as expense
 FROM 
     trigger_ticket t
     LEFT JOIN customer c ON t.customer_id = c.customer_id
     LEFT JOIN users m ON t.manager_id = m.id
-    LEFT JOIN users e ON t.employee_id = e.id;
+    LEFT JOIN users e ON t.employee_id = e.id
+    JOIN customer_expense ce on ce.ticket_id = t.ticket_id;

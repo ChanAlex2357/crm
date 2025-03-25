@@ -109,4 +109,7 @@ public class LeadServiceImpl implements LeadService {
     public List<LeadDTO> getAllLeadsCpl(){
         return  leadRepository.findAllLeadsWithDetails();
     }
+    public LeadDTO getLeadCpl(int id){
+        return  leadRepository.findLeadsWithDetails(id);
+    }
 }

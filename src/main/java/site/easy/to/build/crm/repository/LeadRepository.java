@@ -55,10 +55,40 @@ public interface LeadRepository extends JpaRepository<Lead, Integer> {
                 
                 employee_id as employeeId,
                 employee_username as employeeUsername,
-                employee_email as employeeEmail
+                employee_email as employeeEmail,
+                expense
+
             FROM lead_cpl
             """, nativeQuery = true)
     List<LeadDTO> findAllLeadsWithDetails();
+
+    @Query(value = """ 
+        SELECT 
+            lead_id as leadId,
+            lead_name as leadName,
+            lead_status as leadStatus,
+            lead_phone as leadPhone,
+            meeting_id as meetingId,
+            google_drive as googleDrive,
+            google_drive_folder_id as googleDriveFolderId,
+            created_at as createdAt,
+            
+            customer_id as customerId,
+            customer_name as customerName,
+            customer_email as customerEmail,
+            
+            manager_id as managerId,
+            manager_username as managerUsername,
+            manager_email as managerEmail,
+            
+            employee_id as employeeId,
+            employee_username as employeeUsername,
+            employee_email as employeeEmail,
+            expense
+
+        FROM lead_cpl where lead_id = :leadId
+        """, nativeQuery = true)
+    LeadDTO findLeadsWithDetails(int leadId);
     
     @Query(value = """ 
             SELECT 
@@ -81,7 +111,9 @@ public interface LeadRepository extends JpaRepository<Lead, Integer> {
                 
                 employee_id as employeeId,
                 employee_username as employeeUsername,
-                employee_email as employeeEmail
+                employee_email as employeeEmail,
+                
+                expense
             FROM lead_cpl 
             WHERE customer_id = :customerId
             """, nativeQuery = true)

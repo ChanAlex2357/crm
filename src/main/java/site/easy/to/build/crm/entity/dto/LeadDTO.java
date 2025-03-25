@@ -1,5 +1,6 @@
 package site.easy.to.build.crm.entity.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public interface LeadDTO {
@@ -26,4 +27,6 @@ public interface LeadDTO {
     Integer getEmployeeId();
     String getEmployeeUsername();
     String getEmployeeEmail();
+
+    BigDecimal getExpense();
 }

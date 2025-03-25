@@ -2,6 +2,8 @@ package site.easy.to.build.crm.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
@@ -58,6 +60,10 @@ public class Expense {
     @ManyToOne
     @JoinColumn(name = "lead_id")
     private Lead lead;
+
+    @OneToMany
+    @JoinColumn(name = "expense_id",nullable = true)
+    private List<ExpenseAlert> alerts;
 
 
     public double getDoubleAmount() {

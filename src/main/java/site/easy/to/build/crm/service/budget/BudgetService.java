@@ -17,14 +17,9 @@ public class BudgetService {
     @Autowired
     private BudgetRepository budgetRepository;
     
-    @Autowired
-    private DeviseService deviseService;
     // Create a new Budget
     @Transactional
     public Budget createBudget(Budget budget) {
-        if (budget.getCurrency() == null) {
-            
-        }
         return budgetRepository.save(budget);
     }
     
@@ -66,7 +61,6 @@ public class BudgetService {
         budget.setCreatedAt(LocalDateTime.now());
         budget.setDescription("Budget initial a 0");
         budget.setCustomer(createdCustomer);
-        budget.setCurrency( deviseService.getDeviseById(1));
         return budgetRepository.save(budget);
     }
 }

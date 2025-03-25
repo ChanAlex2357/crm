@@ -5,9 +5,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityManager;
-import jakarta.validation.constraints.NotNull;
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -15,13 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import site.easy.to.build.crm.entity.*;
-import site.easy.to.build.crm.entity.settings.ExpenseSettings;
 import site.easy.to.build.crm.entity.settings.LeadEmailSettings;
 import site.easy.to.build.crm.google.model.calendar.EventDisplay;
 import site.easy.to.build.crm.google.model.drive.GoogleDriveFolder;
@@ -30,11 +25,8 @@ import site.easy.to.build.crm.google.service.acess.GoogleAccessService;
 import site.easy.to.build.crm.google.service.calendar.GoogleCalendarApiService;
 import site.easy.to.build.crm.google.service.drive.GoogleDriveApiService;
 import site.easy.to.build.crm.google.service.gmail.GoogleGmailApiService;
-import site.easy.to.build.crm.service.budget.BudgetService;
 import site.easy.to.build.crm.service.customer.CustomerService;
 import site.easy.to.build.crm.service.drive.GoogleDriveFileService;
-import site.easy.to.build.crm.service.expense.ExpenseService;
-import site.easy.to.build.crm.service.expense.ExpenseSettingsService;
 import site.easy.to.build.crm.service.file.FileService;
 import site.easy.to.build.crm.service.lead.LeadActionService;
 import site.easy.to.build.crm.service.lead.LeadService;
@@ -53,11 +45,8 @@ import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/employee/lead")
-@Slf4j
 public class LeadController {
 
-    @Autowired
-    private ExpenseSettingsService expenseSettingsService;
     private final LeadService leadService;
     private final AuthenticationUtils authenticationUtils;
     private final UserService userService;
@@ -72,13 +61,7 @@ public class LeadController {
     private final GoogleGmailApiService googleGmailApiService;
     private final EntityManager entityManager;
 
-    
     @Autowired
-    private BudgetService budgetService;
-
-    @Autowired
-    private ExpenseService expenseService;
-
     public LeadController(LeadService leadService, AuthenticationUtils authenticationUtils, UserService userService, CustomerService customerService,
                           LeadActionService leadActionService, GoogleCalendarApiService googleCalendarApiService, FileService fileService,
                           GoogleDriveApiService googleDriveApiService, GoogleDriveFileService googleDriveFileService, FileUtil fileUtil,
@@ -177,8 +160,6 @@ public class LeadController {
             return "error/account-inactive";
         }
         populateModelAttributes(model, authentication, user);
-        ExpenseSettings expenseSettings = expenseSettingsService.getLatestExpenseSettings();
-        model.addAttribute("expenseSettings", expenseSettings);
         model.addAttribute("lead", new Lead());
         return "lead/create-lead";
     }
@@ -187,10 +168,7 @@ public class LeadController {
     public String createLead(@ModelAttribute("lead") @Validated Lead lead, BindingResult bindingResult,
                              @RequestParam("customerId") int customerId, @RequestParam("employeeId") int employeeId,
                              Authentication authentication, @RequestParam("allFiles")@Nullable String files,
-                             @RequestParam("folderId") @Nullable String folderId, Model model,
-                             @RequestParam("amount") @NotNull double amount,
-                             @RequestParam("dateExpense") @NotNull String dateExpense,
-                             @RequestParam("budgetId") int budgetId) throws JsonProcessingException {
+                             @RequestParam("folderId") @Nullable String folderId, Model model) throws JsonProcessingException {
 
         int userId = authenticationUtils.getLoggedInUserId(authentication);
         User manager = userService.findById(userId);
@@ -231,14 +209,6 @@ public class LeadController {
         }
 
         Lead createdLead = leadService.save(lead);
-        Budget budget = budgetService.getBudgetById(budgetId);
-        if (budget == null) {
-            User user = userService.findById(userId);
-            populateModelAttributes(model, authentication, user);
-            return "lead/create-lead";
-        }
-        expenseService.createCustomerExpense(amount, dateExpense, budget, customer, createdLead);
-
         fileUtil.saveFiles(allFiles, createdLead);
 
         if (lead.getGoogleDrive() != null) {
@@ -251,8 +221,6 @@ public class LeadController {
         if(AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER")) {
             return "redirect:/employee/lead/created-leads";
         }
-
-        
         return "redirect:/employee/lead/assigned-leads";
     }
 

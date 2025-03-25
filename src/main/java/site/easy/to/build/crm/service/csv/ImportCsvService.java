@@ -8,10 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.csv.CsvMapping;
-import site.easy.to.build.crm.entity.csv.ImportBody;
+import site.easy.to.build.crm.entity.csv.ImportCsvResult;
 import site.easy.to.build.crm.exception.AdminImportException;
 
 import javax.validation.ConstraintViolation;
@@ -21,15 +22,13 @@ import java.time.LocalDateTime;
 
 @Service
 @Validated
-public abstract class ImportService {
-    @Autowired
-    Class<? extends CsvMapping> mapping;
+public abstract class ImportCsvService {
+
 
     @Autowired
     private Validator validator;
 
-    abstract protected void importData(List<? extends CsvMapping> data,ImportBody importBody);
-
+    abstract protected void importData(List<? extends CsvMapping> data,ImportCsvResult importBody);
 
     protected void validate( Object mapped , AdminImportException importException) {
         Set<ConstraintViolation<Object>> violations = validator.validate(mapped);
@@ -39,13 +38,8 @@ public abstract class ImportService {
             for (ConstraintViolation<Object> violation : violations) {
                 errors.add(violation.getMessage());
             }
-            
-            // Tu peux aussi lancer une exception personnalisée ici si nécessaire
-            // importException.addError();
-            
+            importException.addError(errors);
         }
-
     }
-    abstract protected void controller(CsvMapping csvMapping,AdminImportException importException);
-    abstract protected void validate(CsvMapping csvMapping,AdminImportException importException); 
+    // abstract protected void controller(CsvMapping csvMapping,AdminImportException importException);
 }

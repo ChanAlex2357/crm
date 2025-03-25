@@ -10,7 +10,7 @@ import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.Lead;
 import site.easy.to.build.crm.entity.User;
 import site.easy.to.build.crm.entity.csv.CsvMapping;
-import site.easy.to.build.crm.entity.csv.ImportBody;
+import site.easy.to.build.crm.entity.csv.ImportCsvResult;
 import site.easy.to.build.crm.entity.csv.mapping.LeadMapping;
 import site.easy.to.build.crm.service.customer.CustomerServiceImpl;
 import site.easy.to.build.crm.service.user.UserServiceImpl;
@@ -29,7 +29,7 @@ public class LeadImportService extends ImportService{
         super(LeadMapping.class);
     }
     @Override
-    protected void importData(List<? extends CsvMapping> data, ImportBody importBody) {
+    protected void importData(List<? extends CsvMapping> data, ImportCsvResult importBody) {
         log.info("-- IMPORTATION DES LEADS");
         int line = 0;
         for (CsvMapping csvMapping : data) {

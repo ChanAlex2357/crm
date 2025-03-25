@@ -8,7 +8,6 @@ public class AdminImportException extends RuntimeException {
     private List<ImportException> errors ;
     private int currentLine = 0;
     public AdminImportException() {
-        super("Error while importing data");
         setErrors(new ArrayList<>());
     }
 

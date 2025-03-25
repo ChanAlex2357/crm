@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import site.easy.to.build.crm.entity.Lead;
-import site.easy.to.build.crm.entity.csv.ImportBody;
+import site.easy.to.build.crm.entity.csv.ImportCsvResult;
 import site.easy.to.build.crm.entity.csv.ImportData;
 import site.easy.to.build.crm.entity.csv.ImportFormData;
 import site.easy.to.build.crm.exception.AdminImportException;
@@ -53,7 +53,7 @@ public class ImportController {
     @PostMapping("/import/lead")
     public String handleImport(@ModelAttribute ImportData importForm, Model model) {
         
-        ImportBody importBody = null;
+        ImportCsvResult importBody = null;
         try {
             MultipartFile file = importForm.getFile();
             importBody =  importService.importData(file, leadImportService, ',');

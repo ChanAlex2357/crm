@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import site.easy.to.build.crm.entity.csv.form.CrmFilesFormData;
 import site.easy.to.build.crm.entity.csv.results.ImportMapFilesCsvResult;
+import site.easy.to.build.crm.service.csv.CSVImporter;
 import site.easy.to.build.crm.service.csv.ImportCsvManager;
 
 
@@ -18,13 +19,7 @@ import site.easy.to.build.crm.service.csv.ImportCsvManager;
 @RequestMapping("/employee/import")
 public class ImportController {
     @Autowired
-    private ImportCsvManager importManager;
-    // @Autowired
-    // private LeadImportService leadImportService;
-
-    // @Autowired
-    // private AdminImportService importService;
-
+    private CSVImporter csvImporter;
     @GetMapping
     public String importForm(Model model) {
         model.addAttribute("importData",new CrmFilesFormData());
@@ -34,7 +29,7 @@ public class ImportController {
 
     @PostMapping
     public String postMethodName(@ModelAttribute CrmFilesFormData formData,RedirectAttributes redirectAttributes) {
-        ImportMapFilesCsvResult importResults =  importManager.importData(formData);
+        ImportMapFilesCsvResult importResults =  csvImporter.importData(formData);
         if (importResults.hasErrors()) {
             redirectAttributes.addAttribute("importErrors",importResults);
             return "";

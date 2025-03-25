@@ -1,24 +1,29 @@
 package site.easy.to.build.crm.service.csv;
+import site.easy.to.build.crm.entity.Expense;
 import site.easy.to.build.crm.entity.csv.mapping.CsvMapping;
+import site.easy.to.build.crm.entity.csv.mapping.CustomerMapping;
 import site.easy.to.build.crm.exception.ImportException;
 
-public class ExpenseImportService extends ImportCsvService{
-
-    public ExpenseImportService(Class<? extends CsvMapping> mapping) {
-        super(mapping);
-    }
-    
+public class ExpenseImportService implements IImportService<Expense,CustomerMapping> {
 
     @Override
-    protected Object parseFromMappinToInstance(CsvMapping mapping, ImportException lineException) {
+    public Expense parseFromMappinToInstance(CustomerMapping mapping, ImportException lineException) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'parseFromMappinToInstance'");
     }
 
     @Override
-    protected Object saveInstance(Object data, ImportException lineException) {
+    public Expense saveInstance(Expense data, ImportException lineException) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'saveInstance'");
     }
+
+    @Override
+    public Class<CustomerMapping> getMapping() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getMapping'");
+    }
+
+    
     
 }

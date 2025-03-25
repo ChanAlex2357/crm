@@ -1,32 +1,29 @@
 package site.easy.to.build.crm.service.csv;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
-import site.easy.to.build.crm.entity.csv.mapping.CsvMapping;
-import site.easy.to.build.crm.entity.csv.results.ImportMapFilesCsvResult;
+import site.easy.to.build.crm.entity.Budget;
+import site.easy.to.build.crm.entity.csv.mapping.CustomerMapping;
 import site.easy.to.build.crm.exception.ImportException;
 
 @Service
-public class BudgetImportService extends ImportCsvService{
-
-    public BudgetImportService(Class<? extends CsvMapping> mapping) {
-        super(mapping);
-    }
-    
-   
+public class BudgetImportService implements IImportService<Budget,CustomerMapping>{
 
     @Override
-    protected Object parseFromMappinToInstance(CsvMapping mapping, ImportException lineException) {
+    public Budget parseFromMappinToInstance(CustomerMapping mapping, ImportException lineException) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'parseFromMappinToInstance'");
     }
 
     @Override
-    protected Object saveInstance(Object data, ImportException lineException) {
+    public Budget saveInstance(Budget data, ImportException lineException) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'saveInstance'");
     }
-    
-}
+
+    @Override
+    public Class<CustomerMapping> getMapping() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getMapping'");
+    }
+}    

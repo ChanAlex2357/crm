@@ -1,14 +1,7 @@
 package site.easy.to.build.crm.entity.csv.mapping;
 
-import java.time.LocalDateTime;
-
-import org.springframework.transaction.annotation.Transactional;
-
 import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvDate;
-
 import lombok.Getter;
-import site.easy.to.build.crm.entity.Customer;
 
 @Getter
 public class CustomerMapping extends CsvMapping {

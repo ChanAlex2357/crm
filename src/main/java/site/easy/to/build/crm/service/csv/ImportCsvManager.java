@@ -2,46 +2,37 @@ package site.easy.to.build.crm.service.csv;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import site.easy.to.build.crm.entity.csv.form.IFilesFormData;
+import lombok.Data;
 import site.easy.to.build.crm.entity.csv.mapping.CsvMapping;
-import site.easy.to.build.crm.entity.csv.providers.ImportDataProvider;
 import site.easy.to.build.crm.entity.csv.results.ImportFileCsvResult;
-import site.easy.to.build.crm.entity.csv.results.ImportMapFilesCsvResult;
 
-@Service
-public abstract class ImportCsvManager {
-
-    @Autowired
-    private CSVService csvService;
-    
-    public ImportFileCsvResult  importData(ImportDataProvider  importDataProvider){
-        ImportFileCsvResult fileImportResult = new ImportFileCsvResult(importDataProvider.getFile());
-        try {
-            List<CsvMapping> data = csvService.fromCsvToCsvMappping(importDataProvider);
-            importDataProvider.getImportCsvService().importData(data,fileImportResult);
-        } catch (Exception e) {
-        //     String message = e.getMessage();
-        //     if (e.getCause() != null) {
-        //         message += "\n [ because ] :: "+e.getCause().getMessage();
-        //     }
-        //     fileImportResult.addErrors(List.of(message));
-        }
-        return fileImportResult;
+@Data
+public class ImportCsvManager<T,G extends CsvMapping> {
+    private CSVService<T,G> csvService;
+    private MultipartFile file;
+    private IImportService<T,G> infService;
+    private ImportCsvService<T,G> importService;
+    private char separator;
+    public ImportCsvManager(MultipartFile file,IImportService<T,G> inf){
+        csvService = new CSVService<T,G>();
+        setFile(file);
+        setInfService(inf);
+        setImportService(new ImportCsvService<T,G>());
+        setSeparator(separator);
     }
 
-    public ImportMapFilesCsvResult importData(IFilesFormData formData){
-        ImportMapFilesCsvResult importCsvResult = new ImportMapFilesCsvResult(); // prepare result
-        
-        List<ImportDataProvider> importsData = formData.getImportsData();
-        for (ImportDataProvider importDataProvider : importsData) {
-            ImportFileCsvResult importFileCsvResult = importData(importDataProvider);
-            importCsvResult.addImportFileCsvResult(importFileCsvResult);
+    public ImportFileCsvResult  importData(){
+        ImportFileCsvResult fileImportResult = new ImportFileCsvResult(getFile());
+        try {
+            List<G> data = csvService.fromCsvToCsvMappping(this);
+            getImportService().importData(data,fileImportResult,getInfService());
+        } catch (Exception e) {
+            System.out.println("--------------------------------------------------------------");
+            e.printStackTrace();
+            System.out.println("--------------------------------------------------------------");
         }
-        
-        return null;
+        return fileImportResult;
     }
 }

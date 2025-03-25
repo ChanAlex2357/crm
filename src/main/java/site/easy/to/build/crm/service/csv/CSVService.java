@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.extern.slf4j.Slf4j;
-import site.easy.to.build.crm.entity.csv.CsvMapping;
+import site.easy.to.build.crm.entity.csv.mapping.CsvMapping;
 
 @Service
 @Slf4j

@@ -11,8 +11,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
 import site.easy.to.build.crm.entity.Customer;
-import site.easy.to.build.crm.entity.csv.CsvMapping;
-import site.easy.to.build.crm.entity.csv.ImportCsvResult;
+import site.easy.to.build.crm.entity.csv.mapping.CsvMapping;
+import site.easy.to.build.crm.entity.csv.results.ImportFileCsvResult;
+import site.easy.to.build.crm.entity.csv.results.ImportMapFilesCsvResult;
 import site.easy.to.build.crm.exception.AdminImportException;
 
 import javax.validation.ConstraintViolation;
@@ -24,13 +25,15 @@ import java.time.LocalDateTime;
 @Validated
 public abstract class ImportCsvService {
 
-
+    public Class<? extends CsvMapping> mapping;
+    public ImportCsvService( Class<? extends CsvMapping> mapping) {
+        this.mapping = mapping;
+    }
+    
     @Autowired
     private Validator validator;
-
-    abstract protected void importData(List<? extends CsvMapping> data,ImportCsvResult importBody);
-
-    protected void validate( Object mapped , AdminImportException importException) {
+    
+    protected void validate( Object mapped , ImportFileCsvResult importException){
         Set<ConstraintViolation<Object>> violations = validator.validate(mapped);
         if (!violations.isEmpty()) {
             // Traiter les violations
@@ -38,8 +41,9 @@ public abstract class ImportCsvService {
             for (ConstraintViolation<Object> violation : violations) {
                 errors.add(violation.getMessage());
             }
-            importException.addError(errors);
+            importException.addErrors(errors);
         }
     }
-    // abstract protected void controller(CsvMapping csvMapping,AdminImportException importException);
+    
+    abstract protected void importData(List<? extends CsvMapping> data,ImportMapFilesCsvResult importBody);
 }

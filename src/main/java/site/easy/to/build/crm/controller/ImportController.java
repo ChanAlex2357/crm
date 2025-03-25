@@ -5,68 +5,106 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import site.easy.to.build.crm.entity.Lead;
-import site.easy.to.build.crm.entity.csv.ImportBody;
-import site.easy.to.build.crm.entity.csv.ImportData;
-import site.easy.to.build.crm.entity.csv.ImportFormData;
-import site.easy.to.build.crm.exception.AdminImportException;
-import site.easy.to.build.crm.service.csv.LeadImportService;
-import site.easy.to.build.crm.service.csv.general.AdminImportService;
-import site.easy.to.build.crm.service.lead.LeadServiceImpl;
+import jakarta.transaction.Transactional;
+import site.easy.to.build.crm.entity.Budget;
+import site.easy.to.build.crm.entity.Customer;
+import site.easy.to.build.crm.entity.csv.CrmFiles;
+import site.easy.to.build.crm.entity.csv.results.ImportFileCsvResult;
+import site.easy.to.build.crm.entity.csv.results.ImportMapFilesCsvResult;
+import site.easy.to.build.crm.service.budget.BudgetService;
+import site.easy.to.build.crm.service.csv.importer.BudgetImportService;
+import site.easy.to.build.crm.service.csv.importer.CustomerImportService;
+import site.easy.to.build.crm.service.customer.CustomerService;
+
 
 @Controller
 @RequestMapping("/employee/import")
+@Transactional  
 public class ImportController {
-    
-    @Autowired
-    private LeadImportService leadImportService;
 
     @Autowired
-    private LeadServiceImpl leadService ;
+    private CustomerImportService customerImportService;
 
     @Autowired
-    private AdminImportService importService;
+    private BudgetImportService budgetImportService;
+
+    @Autowired
+    private BudgetService budgetService;
+    @Autowired
+    private CustomerService customerService;
 
     @GetMapping
-    public String importForm(Model model) {
-        model.addAttribute("importData",new ImportFormData());
+    public String importForm(Model model,RedirectAttributes redirectAttributes) {
+        model.addAttribute("importData",new CrmFiles());
         return "import/form";
 
     }
 
-    @PostMapping("/import/lead")
-    public String handleImport(@ModelAttribute ImportData importForm, Model model) {
-        
-        ImportBody importBody = null;
+    @PostMapping
+    @Transactional
+    public String postMethodName(@ModelAttribute CrmFiles formData,RedirectAttributes redirectAttributes) {
+        ImportMapFilesCsvResult importResults =  new ImportMapFilesCsvResult();
         try {
-            MultipartFile file = importForm.getFile();
-            importBody =  importService.importData(file, leadImportService, ',');
-            if (importBody == null) {
-                throw new Exception("Error while importing data");
-            }
-            // Verification des erreurs
-            if (importBody.getImportException().hasErrors()) {
-                throw importBody.getImportException();
-            }
+            // Importation des customers
+            ImportFileCsvResult<Customer> customerResult = customerImportService.importData(formData.getCustomerFile());
+            importResults.addImportFileCsvResult(customerResult);
+    
             // Persistance de de chaque ligne de donnee
-            for (Object leadObject : importBody.getData()) {
-                leadService.save(
-                    (Lead) leadObject
-                );
+            customerService.saveAll(customerResult.getData());
+            // Importation de budgets
+            ImportFileCsvResult<Budget> budgetResult = budgetImportService.importData(formData.getBudgetFile());
+            importResults.addImportFileCsvResult(budgetResult);
+    
+            if (importResults.hasErrors()) {
+                redirectAttributes.addFlashAttribute("importErrors",importResults.getErrorHtml());
+                return "redirect:/employee/import";
             }
-        } catch (AdminImportException e) {
-            model.addAttribute("errors", e);
-            model.addAttribute("importData",new ImportData("lead"));
-            return "import/import-lead";
-        } catch ( Exception exc){
-            model.addAttribute("importData",new ImportData("lead"));
-            return "import/import-lead";
+            // Persistance de budget
+            budgetService.saveAll(budgetResult.getData());
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("importErrors",e.getMessage());
+            return "redirect:/employee/import";
         }
-        return "redirect:/employee/lead/assigned-leads";
+        redirectAttributes.addFlashAttribute("importMessage","Donnee importer avec success");
+        return "redirect:/employee/import";
     }
+    
+    
+
+    // @PostMapping("/import/lead")
+    // public String handleImport(@ModelAttribute ImportDataProvider importForm, Model model) {
+        
+    //     ImportCsvResult importBody = null;
+    //     try {
+    //         MultipartFile file = importForm.getFile();
+    //         importBody =  importService.importData(file, leadImportService, ',');
+    //         if (importBody == null) {
+    //             throw new Exception("Error while importing data");
+    //         }
+    //         // Verification des erreurs
+    //         if (importBody.getImportException().hasErrors()) {
+    //             throw importBody.getImportException();
+    //         }
+    //         // Persistance de de chaque ligne de donnee
+    //         for (Object leadObject : importBody.getData()) {
+    //             leadService.save(
+    //                 (Lead) leadObject
+    //             );
+    //         }
+    //     } catch (AdminImportException e) {
+    //         model.addAttribute("errors", e);
+    //         model.addAttribute("importData",new ImportDataProvider("lead"));
+    //         return "import/import-lead";
+    //     } catch ( Exception exc){
+    //         model.addAttribute("importData",new ImportDataProvider("lead"));
+    //         return "import/import-lead";
+    //     }
+    //     return "redirect:/employee/lead/assigned-leads";
+    // }
 }

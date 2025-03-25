@@ -1,11 +1,10 @@
 package site.easy.to.build.crm.entity.csv;
 
 import org.springframework.web.multipart.MultipartFile;
-
 import lombok.Data;
-
 @Data
-public class ImportFormData {
+public class CrmFiles implements FilesMapping{
     MultipartFile customerFile;
-    MultipartFile customerDataFile;
+    MultipartFile expenseFile;
+    MultipartFile budgetFile;
 }

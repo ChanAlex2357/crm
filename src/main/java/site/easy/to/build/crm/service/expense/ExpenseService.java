@@ -15,7 +15,6 @@ import jakarta.validation.Validator;
 import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.Expense;
-import site.easy.to.build.crm.entity.ExpenseAlert;
 import site.easy.to.build.crm.entity.Lead;
 import site.easy.to.build.crm.entity.Ticket;
 import site.easy.to.build.crm.repository.ExpenseRepository;
@@ -26,8 +25,6 @@ public class ExpenseService {
     @Autowired
     private ExpenseSettingsService expenseSettingsService;
 
-    @Autowired
-    private ExpenseAlertService expenseAlertService;
     @Autowired
     private Validator validator;
 
@@ -80,10 +77,6 @@ public class ExpenseService {
         expense.setCustomer(customer);
         expense.setBudget(budget);
         createExpense(expense);
-        List<ExpenseAlert> alerts = expenseSettingsService.checkExpenseAlerts(expense);
-        for (ExpenseAlert expenseAlert : alerts) {
-            expenseAlertService.createExpenseAlert(expenseAlert);
-        }
         
         return expense;
     }

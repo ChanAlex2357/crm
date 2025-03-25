@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.entity.Customer;
-import site.easy.to.build.crm.entity.Devise;
 import site.easy.to.build.crm.entity.User;
-import site.easy.to.build.crm.service.budget.DeviseService;
+import site.easy.to.build.crm.service.customer.CustomerService;
 import site.easy.to.build.crm.service.customer.CustomerServiceImpl;
 import site.easy.to.build.crm.service.user.UserServiceImpl;
 import site.easy.to.build.crm.util.AuthenticationUtils;
@@ -36,19 +35,16 @@ public class BudgetController {
     @Autowired
     private BudgetService budgetService;
 
-    private final DeviseService deviseService;
-
     private final UserServiceImpl userService;
 
     private final AuthenticationUtils authenticationUtils;
 
-    private final CustomerServiceImpl customerService;
+    @Autowired
+    private CustomerService customerService;
 
-    BudgetController(CustomerServiceImpl customerServiceImpl, AuthenticationUtils authenticationUtils, UserServiceImpl userServiceImpl, DeviseService deviseService) {
-        this.customerService = customerServiceImpl;
+    BudgetController( AuthenticationUtils authenticationUtils, UserServiceImpl userServiceImpl) {
         this.authenticationUtils = authenticationUtils;
         this.userService = userServiceImpl;
-        this.deviseService = deviseService;
     }
 
     @GetMapping("/employee/budget/create")
@@ -66,11 +62,9 @@ public class BudgetController {
         } else {
             customers = customerService.findByUserId(userId);
         }
-        List<Devise> currencies = deviseService.findAll();
 
         model.addAttribute("customers", customers);
         model.addAttribute("budget", new Budget());
-        model.addAttribute("currencies", currencies);
         return "budget/create";
     }
 
@@ -123,10 +117,7 @@ public class BudgetController {
         if(AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER")){
             customers = customerService.findAll();
         }
-        List<Devise> currencies = deviseService.findAll();
-        
         model.addAttribute("customers", customers);
-        model.addAttribute("currencies", currencies);
         model.addAttribute("budget", budget);
         return "budget/update";
     }
@@ -139,7 +130,8 @@ public class BudgetController {
         Authentication authentication,
         @RequestParam("customerId") int customerId,
         @RequestParam("currency") int currencyId
-    ) {
+    ) 
+    {
         int userId = authenticationUtils.getLoggedInUserId(authentication);
         User user = userService.findById(userId);
         if(user.isInactiveUser()){
@@ -149,19 +141,12 @@ public class BudgetController {
         if (customer == null || (customer.getUser().getId() != userId && !AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER"))) {
             return "error/500";
         }
-        Devise currency = deviseService.getDeviseById(currencyId);
-        if (currency == null) {
-            return "error/500";
-        }
-
         if(bindingResult.hasErrors()){
             List<Customer> customers = customerService.findByUserId(userId);
             if(AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER")){
                 customers = customerService.findAll();
             }
-            List<Devise> currencies = deviseService.findAll();
             model.addAttribute("customers", customers);
-            model.addAttribute("currencies", currencies);
             return "budget/update";
         }
 
@@ -169,11 +154,8 @@ public class BudgetController {
         log.info("Updating budget: {}", budget);
         Budget existingBudget = budgetService.getBudgetById(budget.getBudgetId());
         
-        
         budget.setCreatedAt(existingBudget.getCreatedAt());
-        budget.setCurrency(currency);
         budget.setCustomer(customer);
-        
         budgetService.updateBudget(budget);
 
         return "redirect:/employee/budget/show-all";

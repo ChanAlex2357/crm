@@ -7,4 +7,10 @@ import lombok.Data;
 @Data
 public class ImportMapFilesCsvResult {
    List<ImportFileCsvResult> fileCsvResults;
+   public ImportMapFilesCsvResult(){
+      setFileCsvResults(new ArrayList<>());
+   }
+   public void addImportFileCsvResult(ImportFileCsvResult fileResult){
+      getFileCsvResults().add(fileResult);
+   }
 }

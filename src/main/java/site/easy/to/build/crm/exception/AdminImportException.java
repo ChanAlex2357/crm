@@ -1,33 +1,30 @@
 package site.easy.to.build.crm.exception;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import lombok.Data;
+
+@Data
 public class AdminImportException extends RuntimeException {
-    
-    private List<ImportException> errors ;
+    private HashMap<Integer,ImportException> errors;
     private int currentLine = 0;
     public AdminImportException() {
-        setErrors(new ArrayList<>());
-    }
 
-    public List<ImportException> getErrors() {
-        return errors;
-    }
-
-    private void setErrors(List<ImportException> errors) {
-        this.errors = errors;
-    }
-
-    public void addError(ImportException error) {
-        errors.add(error);
+        setErrors(new HashMap<Integer,ImportException>());
     }
     public void addError(List<String> errorMessages) {
-        addError(new ImportException(currentLine++ , errorMessages));
+        // TODO
+        // addError(new ImportException(currentLine++ , errorMessages));
     }
 
     public boolean hasErrors() {
         return errors != null && !getErrors().isEmpty();
+    }
+
+    public ImportException next(){
+        return errors.get(currentLine++);
     }
     
 }

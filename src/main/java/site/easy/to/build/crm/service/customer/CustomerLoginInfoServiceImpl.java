@@ -1,6 +1,8 @@
 package site.easy.to.build.crm.service.customer;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import site.easy.to.build.crm.repository.CustomerLoginInfoRepository;
 import site.easy.to.build.crm.entity.CustomerLoginInfo;
 
@@ -29,6 +31,7 @@ public class CustomerLoginInfoServiceImpl implements CustomerLoginInfoService {
     }
 
     @Override
+    @Transactional
     public CustomerLoginInfo save(CustomerLoginInfo customerLoginInfo) {
         return customerLoginInfoRepository.save(customerLoginInfo);
     }

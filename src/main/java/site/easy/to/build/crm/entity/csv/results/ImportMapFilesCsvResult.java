@@ -6,16 +6,16 @@ import java.util.List;
 import lombok.Data;
 @Data
 public class ImportMapFilesCsvResult {
-   List<ImportFileCsvResult> fileCsvResults;
+   List<ImportFileCsvResult<?>> fileCsvResults;
    public ImportMapFilesCsvResult(){
       setFileCsvResults(new ArrayList<>());
    }
-   public void addImportFileCsvResult(ImportFileCsvResult fileResult){
+   public void addImportFileCsvResult(ImportFileCsvResult<?> fileResult){
       getFileCsvResults().add(fileResult);
    }
 
    public boolean hasErrors(){
-      for (ImportFileCsvResult importFileCsvResult : fileCsvResults) {
+      for (ImportFileCsvResult<?> importFileCsvResult : fileCsvResults) {
          if (importFileCsvResult.hasErrors()) {
             return true;
          }

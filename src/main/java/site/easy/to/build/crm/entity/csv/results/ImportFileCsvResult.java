@@ -10,17 +10,17 @@ import site.easy.to.build.crm.exception.AdminImportException;
 import site.easy.to.build.crm.exception.ImportException;
 
 @Data
-public class ImportFileCsvResult {
+public class ImportFileCsvResult<T>{
     MultipartFile fileSource;
     String dataStr;
-    List<Object> data;
+    List<T> data;
     AdminImportException exceptions;
     public ImportFileCsvResult (MultipartFile file){
         setFileSource(file);
-        setData(new ArrayList<>());
+        setData(new ArrayList<T>());
         setExceptions(new AdminImportException());
     }
-    public void addData(Object data) {
+    public void addData(T data) {
         this.data.add(data);
     }
     public boolean hasErrors() {
@@ -28,6 +28,6 @@ public class ImportFileCsvResult {
     }
 
     public ImportException getImportException(int line){
-        return exceptions.getErrors().get(line);
+        return exceptions.getOrCreate(line);
     }
 }

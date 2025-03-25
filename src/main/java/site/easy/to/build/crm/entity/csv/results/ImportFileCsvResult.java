@@ -1,4 +1,4 @@
-package site.easy.to.build.crm.entity.csv;
+package site.easy.to.build.crm.entity.csv.results;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +9,12 @@ import lombok.Data;
 import site.easy.to.build.crm.exception.AdminImportException;
 
 @Data
-public class FileCsvResult {
+public class ImportFileCsvResult {
     MultipartFile fileSource;
     List<Object> data;
     AdminImportException exceptions;
-    public FileCsvResult (MultipartFile file){
+    
+    public ImportFileCsvResult (MultipartFile file){
         setFileSource(file);
         setData(new ArrayList<>());
         setExceptions(new AdminImportException());

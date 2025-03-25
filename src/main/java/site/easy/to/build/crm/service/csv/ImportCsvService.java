@@ -24,6 +24,7 @@ public class ImportCsvService<T,G extends CsvMapping> {
     private boolean auto_save = true;
     @Autowired
     private Validator validator;
+    
     public void disableAutoSave(){
         setAuto_save(false);
     }

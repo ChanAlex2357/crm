@@ -33,11 +33,11 @@ public class CSVService<T,G extends CsvMapping> {
         }
     }
 
-    public List<G> fromCsvToCsvMappping(ImportCsvManager<T,G> manager){
+    public List<G> fromCsvToCsvMappping(MultipartFile file,ImportCsvManager<T,G> manager,char separator){
         return parseCSV(
-            manager.getFile(),
+            file,
             manager.getInfService().getMapping(),
-            manager.getSeparator()
+            separator
         );
     }
 }

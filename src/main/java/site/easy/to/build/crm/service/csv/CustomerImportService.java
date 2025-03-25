@@ -6,14 +6,12 @@ import org.springframework.stereotype.Service;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.csv.mapping.CustomerMapping;
 import site.easy.to.build.crm.exception.ImportException;
-import site.easy.to.build.crm.service.customer.CustomerServiceImpl;
+import site.easy.to.build.crm.service.customer.CustomerService;
 
 @Service
 public class CustomerImportService implements IImportService<Customer,CustomerMapping> {
     @Autowired
-    private CustomerServiceImpl customerService;
-
-
+    private CustomerService customerService;
     @Override
     public Customer parseFromMappinToInstance(CustomerMapping mapping, ImportException lineException) {
         Customer customer = new Customer();
@@ -23,7 +21,8 @@ public class CustomerImportService implements IImportService<Customer,CustomerMa
     }
     @Override
     public Customer saveInstance(Customer data, ImportException lineException) {
-        return null;
+        // customerService.save(data);
+        return data;
     }
     @Override
     public Class<CustomerMapping> getMapping() {

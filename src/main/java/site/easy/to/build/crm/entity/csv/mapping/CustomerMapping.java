@@ -1,6 +1,7 @@
 package site.easy.to.build.crm.entity.csv.mapping;
 
 import com.opencsv.bean.CsvBindByName;
+
 import lombok.Getter;
 
 @Getter
@@ -28,9 +29,9 @@ public class CustomerMapping extends CsvMapping {
         +----------------+--------------+------+-----+---------+----------------+
     */
 
-    @CsvBindByName(column = "name", required = true)
+    @CsvBindByName(column = "customer_name", required = true)
     private String name;
 
-    @CsvBindByName(column = "email", required = true)
+    @CsvBindByName(column = "customer_email", required = true)
     private String email;
 }

@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import site.easy.to.build.crm.entity.csv.form.CrmFilesFormData;
+import site.easy.to.build.crm.entity.csv.datamanager.CrmFilesFormData;
+import site.easy.to.build.crm.entity.csv.form.CrmFiles;
 import site.easy.to.build.crm.entity.csv.results.ImportMapFilesCsvResult;
 import site.easy.to.build.crm.service.csv.CSVImporter;
 import site.easy.to.build.crm.service.csv.ImportCsvManager;
@@ -20,22 +21,26 @@ import site.easy.to.build.crm.service.csv.ImportCsvManager;
 public class ImportController {
     @Autowired
     private CSVImporter csvImporter;
+
+    @Autowired
+    private CrmFilesFormData dataManager;
+
     @GetMapping
     public String importForm(Model model) {
-        model.addAttribute("importData",new CrmFilesFormData());
+        model.addAttribute("importData",new CrmFiles());
         return "import/form";
 
     }
 
     @PostMapping
-    public String postMethodName(@ModelAttribute CrmFilesFormData formData,RedirectAttributes redirectAttributes) {
-        ImportMapFilesCsvResult importResults =  csvImporter.importData(formData);
+    public String postMethodName(@ModelAttribute CrmFiles formData,RedirectAttributes redirectAttributes) {
+        ImportMapFilesCsvResult importResults =  csvImporter.importData(dataManager,formData);
         if (importResults.hasErrors()) {
             redirectAttributes.addAttribute("importErrors",importResults);
             return "";
         }
         redirectAttributes.addAttribute("importMessage","Donnee importer avec success");
-        return "redirect:import/form";
+        return "redirect:/employee/import/form";
     }
     
 

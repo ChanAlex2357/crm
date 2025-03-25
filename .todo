@@ -1,0 +1,55 @@
+# TODO - List
+
+## Debug projet
+
+- [x] Documentation Spring Security
+- [x] Documentation Authentication process
+
+## Importation de donnee
+
+- [x] Brainstorming Import generic
+- [x] Choix de tech adapte pour Spring boot
+- [x] Documentation OpenCsv
+- [x] Integrer dependence Csv
+- [x] Service de parsing csv
+- [x] Mapping generic de model pour l'import | 5
+- [x] Service generic d'import
+- [x] Service Admin pour l'import
+- [x] Model de formulaire d'import
+- [x] page d'import
+- [x] dynamysme de la page d'import
+- [x] limation d'acces a la page d'import pour manager et employer
+- [x] Implementation de l'import pour la table Lead (12 / 7)
+  - [x] Creation du model mapping pour les Leads
+  - [x] Controller pour le leadMapping
+  - [x] Service lead Mapping
+- [x] generer donnee csv pour lead
+  - [x] cree un customer
+  - [x] enumerer la liste des lead status
+  - [x] gestion de la reponse avec ImportBody
+  - [x] implementation de ImportBody dans le processus d'import
+  - [x] transfer d'une CsvMapping vers un Model entity
+  - [x] adapter transfer pour LeadMapping
+  - [x] traitement des lignes pour lead.csv
+  - [x] recuperation des erreurs de donnee
+  - [x] redirection en cas d'erreur
+- [x] Test d'excecution de la recuperation du fichier
+  - [x] Reussir une importation de leads
+  - [x] Afficher la liste des erreurs d'importations
+
+## Gestion de budget et depenses
+
+- [x] Analyse du sujet sur implementation dans l'existant
+
+### Budget
+
+- [ ] Bdd
+  - [x] Creation de la table budget
+  - [x] relation avec customer
+  - [x] Creation de la table avec customer
+- [ ] Affichage
+  - [x] formulaire d'insertion de budget pour les employer
+  - [] traitement des erreurs de validations
+  - [ ] restriction pour chaque role
+- [ ] Metier
+  - [ ] Creation du model customer_budget

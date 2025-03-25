@@ -20,16 +20,16 @@ public abstract class ImportCsvManager {
     
     public ImportFileCsvResult  importData(ImportDataProvider  importDataProvider){
         ImportFileCsvResult fileImportResult = new ImportFileCsvResult(importDataProvider.getFile());
-        // try {
-        //     List<CsvMapping> data = csvService.parseCSV(file, importService.getMapping(), separator);
-        //     importService.importData(data,fileImportResult);
-        // } catch (Exception e) {
+        try {
+            List<CsvMapping> data = csvService.fromCsvToCsvMappping(importDataProvider);
+            importDataProvider.getImportCsvService().importData(data,fileImportResult);
+        } catch (Exception e) {
         //     String message = e.getMessage();
         //     if (e.getCause() != null) {
         //         message += "\n [ because ] :: "+e.getCause().getMessage();
         //     }
         //     fileImportResult.addErrors(List.of(message));
-        // }
+        }
         return fileImportResult;
     }
 

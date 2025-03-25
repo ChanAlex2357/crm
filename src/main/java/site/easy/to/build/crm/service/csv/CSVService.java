@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,10 +13,12 @@ import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.extern.slf4j.Slf4j;
 import site.easy.to.build.crm.entity.csv.mapping.CsvMapping;
+import site.easy.to.build.crm.entity.csv.providers.ImportDataProvider;
 
 @Service
 @Slf4j
 public class CSVService {
+
     public List<CsvMapping> parseCSV(MultipartFile file, Class<? extends CsvMapping> clazz, char separator){
         try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             CsvToBean<CsvMapping> csvToBean = new CsvToBeanBuilder<CsvMapping>(reader)
@@ -32,7 +35,16 @@ public class CSVService {
             throw new RuntimeException("Failed to process CSV file: " + e.getMessage());
         }
     }
+
+    public List<CsvMapping> fromCsvToCsvMappping(ImportDataProvider importDataProvider){
+        return parseCSV(
+            importDataProvider.getFile(),
+            importDataProvider.getImportCsvService().getMapping(),
+            importDataProvider.getSeparator()
+        );
+    }
+
     public List<CsvMapping> parseCSV(MultipartFile file, Class<? extends CsvMapping> clazz){
-        return parseCSV(file, clazz, ',');
+        return parseCSV(file, clazz, ';');
     }
 }

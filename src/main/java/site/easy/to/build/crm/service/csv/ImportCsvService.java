@@ -10,21 +10,22 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.Data;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.csv.mapping.CsvMapping;
 import site.easy.to.build.crm.entity.csv.results.ImportFileCsvResult;
 import site.easy.to.build.crm.entity.csv.results.ImportMapFilesCsvResult;
-import site.easy.to.build.crm.exception.AdminImportException;
+import site.easy.to.build.crm.exception.ImportException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import java.time.LocalDateTime;
 
 
 @Service
 @Validated
+@Data
 public abstract class ImportCsvService {
-
+    private boolean auto_save = true;
     public Class<? extends CsvMapping> mapping;
     public ImportCsvService( Class<? extends CsvMapping> mapping) {
         this.mapping = mapping;
@@ -33,17 +34,36 @@ public abstract class ImportCsvService {
     @Autowired
     private Validator validator;
     
-    protected void validate( Object mapped , ImportFileCsvResult importException){
+    public void disableAutoSave(){
+        setAuto_save(false);
+    }
+
+    protected void validateConstraint(Object mapped , ImportException lineException){
         Set<ConstraintViolation<Object>> violations = validator.validate(mapped);
         if (!violations.isEmpty()) {
-            // Traiter les violations
-            List<String> errors = new ArrayList<>();
             for (ConstraintViolation<Object> violation : violations) {
-                errors.add(violation.getMessage());
+                lineException.addError(violation.getMessage());
             }
-            importException.addErrors(errors);
         }
     }
+    protected void validate( Object mapped , ImportException lineException){
+        validateConstraint(mapped,lineException);
+    }
     
-    abstract protected void importData(List<? extends CsvMapping> data,ImportMapFilesCsvResult importBody);
+    abstract protected Object parseFromMappinToInstance(CsvMapping mapping , ImportException lineException);
+    abstract protected Object saveInstance(Object data,ImportException lineException);
+    
+    // abstract protected void importData(List<? extends CsvMapping> data,ImportFileCsvResult importBody);
+    @Transactional
+    public void importData(List<? extends CsvMapping> data,ImportFileCsvResult importBody){
+        int numLine = 1;
+        for (CsvMapping mapped : data) {
+            ImportException e = importBody.getImportException(numLine);
+            Object instance = parseFromMappinToInstance(mapped, e);
+            validate(instance, e);
+            if (auto_save && !e.hasEsrrors()) {
+                saveInstance(data,e);
+            }
+        }
+    }
 }

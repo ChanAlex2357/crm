@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import site.easy.to.build.crm.entity.csv.mapping.CsvMapping;
 import site.easy.to.build.crm.entity.csv.results.ImportMapFilesCsvResult;
+import site.easy.to.build.crm.exception.ImportException;
 
 @Service
 public class BudgetImportService extends ImportCsvService{
@@ -14,10 +15,18 @@ public class BudgetImportService extends ImportCsvService{
         super(mapping);
     }
     
+   
+
     @Override
-    protected void importData(List<? extends CsvMapping> data, ImportMapFilesCsvResult importBody) {
+    protected Object parseFromMappinToInstance(CsvMapping mapping, ImportException lineException) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'importData'");
+        throw new UnsupportedOperationException("Unimplemented method 'parseFromMappinToInstance'");
+    }
+
+    @Override
+    protected Object saveInstance(Object data, ImportException lineException) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'saveInstance'");
     }
     
 }

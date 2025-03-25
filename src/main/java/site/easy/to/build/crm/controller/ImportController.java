@@ -32,7 +32,7 @@ public class ImportController {
     @Autowired
     private AdminImportService importService;
 
-    @GetMapping("/import")
+    @GetMapping
     public String importForm(Model model) {
         model.addAttribute("importData",new ImportFormData());
         return "import/form";

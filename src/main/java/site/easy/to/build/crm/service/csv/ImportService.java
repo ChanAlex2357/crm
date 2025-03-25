@@ -1,5 +1,6 @@
 package site.easy.to.build.crm.service.csv;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -34,14 +35,13 @@ public abstract class ImportService {
         Set<ConstraintViolation<Object>> violations = validator.validate(mapped);
         if (!violations.isEmpty()) {
             // Traiter les violations
-            StringBuilder errors = new StringBuilder();
+            List<String> errors = new ArrayList<>();
             for (ConstraintViolation<Object> violation : violations) {
-                errors.append(violation.getMessage()).append("\n");
+                errors.add(violation.getMessage());
             }
-            // Stocker ou logger les erreurs
-            System.out.println("Validation errors: " + errors.toString());
+            
             // Tu peux aussi lancer une exception personnalisée ici si nécessaire
-            importException.addError();
+            // importException.addError();
             
         }
 

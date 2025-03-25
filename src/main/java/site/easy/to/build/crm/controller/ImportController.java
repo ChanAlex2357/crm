@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import site.easy.to.build.crm.entity.Lead;
 import site.easy.to.build.crm.entity.csv.ImportBody;
 import site.easy.to.build.crm.entity.csv.ImportData;
+import site.easy.to.build.crm.entity.csv.ImportFormData;
 import site.easy.to.build.crm.exception.AdminImportException;
 import site.easy.to.build.crm.service.csv.LeadImportService;
 import site.easy.to.build.crm.service.csv.general.AdminImportService;
@@ -33,8 +34,8 @@ public class ImportController {
 
     @GetMapping("/import")
     public String importForm(Model model) {
-        model.addAttribute("importData",new ImportData());
-        return "import/import-lead";
+        model.addAttribute("importData",new ImportFormData());
+        return "import/form";
 
     }
 

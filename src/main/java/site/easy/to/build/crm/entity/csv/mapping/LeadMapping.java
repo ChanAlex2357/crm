@@ -61,25 +61,4 @@ public class LeadMapping extends CsvMapping{
     @CsvBindByName(column = "created_at")
     @CsvDate("yyyy-MM-dd HH:mm:ss")
     private LocalDateTime  createdAt;
-
-
-    // @Override
-    // public Lead transfer() {
-    //     Lead lead = new Lead(
-    //         getName(),
-    //         getStatus(),
-    //         getPhone(),
-    //         getMeetingId(),
-    //         getGoogleDrive() == '1' ? Boolean.TRUE : Boolean.FALSE,
-    //         getGoogleDriveFolderId(),
-    //         null,
-    //         null,
-    //         null,
-    //         null,
-    //         null,
-    //         null,
-    //         getCreatedAt()
-    //     );
-    //     return lead;
-    // }
 }

@@ -9,39 +9,72 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import site.easy.to.build.crm.entity.csv.datamanager.CrmFilesFormData;
-import site.easy.to.build.crm.entity.csv.form.CrmFiles;
+import jakarta.transaction.Transactional;
+import site.easy.to.build.crm.entity.Budget;
+import site.easy.to.build.crm.entity.Customer;
+import site.easy.to.build.crm.entity.csv.CrmFiles;
+import site.easy.to.build.crm.entity.csv.results.ImportFileCsvResult;
 import site.easy.to.build.crm.entity.csv.results.ImportMapFilesCsvResult;
-import site.easy.to.build.crm.service.csv.CSVImporter;
-import site.easy.to.build.crm.service.csv.ImportCsvManager;
+import site.easy.to.build.crm.service.budget.BudgetService;
+import site.easy.to.build.crm.service.csv.importer.BudgetImportService;
+import site.easy.to.build.crm.service.csv.importer.CustomerImportService;
+import site.easy.to.build.crm.service.customer.CustomerService;
 
 
 @Controller
 @RequestMapping("/employee/import")
+@Transactional  
 public class ImportController {
-    @Autowired
-    private CSVImporter csvImporter;
 
     @Autowired
-    private CrmFilesFormData dataManager;
+    private CustomerImportService customerImportService;
+
+    @Autowired
+    private BudgetImportService budgetImportService;
+
+    @Autowired
+    private BudgetService budgetService;
+    @Autowired
+    private CustomerService customerService;
 
     @GetMapping
-    public String importForm(Model model) {
+    public String importForm(Model model,RedirectAttributes redirectAttributes) {
         model.addAttribute("importData",new CrmFiles());
         return "import/form";
 
     }
 
     @PostMapping
+    @Transactional
     public String postMethodName(@ModelAttribute CrmFiles formData,RedirectAttributes redirectAttributes) {
-        ImportMapFilesCsvResult importResults =  csvImporter.importData(dataManager,formData);
-        if (importResults.hasErrors()) {
-            redirectAttributes.addAttribute("importErrors",importResults);
-            return "";
+        ImportMapFilesCsvResult importResults =  new ImportMapFilesCsvResult();
+        try {
+            // Importation des customers
+            ImportFileCsvResult<Customer> customerResult = customerImportService.importData(formData.getCustomerFile());
+            importResults.addImportFileCsvResult(customerResult);
+    
+            // Persistance de de chaque ligne de donnee
+            customerService.saveAll(customerResult.getData());
+            // Importation de budgets
+            ImportFileCsvResult<Budget> budgetResult = budgetImportService.importData(formData.getBudgetFile());
+            importResults.addImportFileCsvResult(budgetResult);
+    
+            if (importResults.hasErrors()) {
+                redirectAttributes.addFlashAttribute("importErrors",importResults.getErrorHtml());
+                return "redirect:/employee/import";
+            }
+            // Persistance de budget
+            budgetService.saveAll(budgetResult.getData());
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("importErrors",e.getMessage());
+            return "redirect:/employee/import";
         }
-        redirectAttributes.addAttribute("importMessage","Donnee importer avec success");
-        return "redirect:/employee/import/form";
+        redirectAttributes.addFlashAttribute("importMessage","Donnee importer avec success");
+        return "redirect:/employee/import";
     }
+    
     
 
     // @PostMapping("/import/lead")

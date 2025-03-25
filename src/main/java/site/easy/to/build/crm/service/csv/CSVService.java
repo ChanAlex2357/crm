@@ -16,7 +16,6 @@ import site.easy.to.build.crm.entity.csv.mapping.CsvMapping;
 @Service
 @Slf4j
 public class CSVService<T,G extends CsvMapping> {
-
     public List<G> parseCSV(MultipartFile file, Class<G> clazz, char separator){
         try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             CsvToBean<G> csvToBean = new CsvToBeanBuilder<G>(reader)
@@ -31,13 +30,5 @@ public class CSVService<T,G extends CsvMapping> {
             log.error("Error parsing CSV file", e);
             throw new RuntimeException("Failed to process CSV file: " + e.getMessage());
         }
-    }
-
-    public List<G> fromCsvToCsvMappping(MultipartFile file,ImportCsvManager<T,G> manager,char separator){
-        return parseCSV(
-            file,
-            manager.getInfService().getMapping(),
-            separator
-        );
     }
 }

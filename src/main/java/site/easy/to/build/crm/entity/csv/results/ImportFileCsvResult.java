@@ -6,22 +6,21 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
-import site.easy.to.build.crm.enums.ImportErrorStatus;
 import site.easy.to.build.crm.exception.AdminImportException;
 import site.easy.to.build.crm.exception.ImportException;
 
 @Data
-public class ImportFileCsvResult {
+public class ImportFileCsvResult<T>{
     MultipartFile fileSource;
     String dataStr;
-    List<Object> data;
+    List<T> data;
     AdminImportException exceptions;
     public ImportFileCsvResult (MultipartFile file){
         setFileSource(file);
-        setData(new ArrayList<>());
+        setData(new ArrayList<T>());
         setExceptions(new AdminImportException());
     }
-    public void addData(Object data) {
+    public void addData(T data) {
         this.data.add(data);
     }
     public boolean hasErrors() {
@@ -29,6 +28,13 @@ public class ImportFileCsvResult {
     }
 
     public ImportException getImportException(int line){
-        return exceptions.getErrors().get(line);
+        return exceptions.getOrCreate(line);
+    }
+    public String getErrorHtml() {
+        String html ="";
+        for( ImportException exception : exceptions.getErrors().values()){
+            html += exception.getHtml("FILE : "+getFileSource().getName()+" errors");
+        }
+        return html;
     }
 }

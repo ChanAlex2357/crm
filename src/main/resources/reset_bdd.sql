@@ -37,11 +37,6 @@ INSERT IGNORE INTO `roles` (id, name)
 VALUES (1, 'ROLE_MANAGER'), (2, 'ROLE_EMPLOYEE'), (3, 'ROLE_CUSTOMER')
 ON DUPLICATE KEY UPDATE id = id;
 
--- [ CURRENCY ]
-INSERT IGNORE INTO `currency` (id, libelle, val)
-VALUES (1, 'Euro', 'EUR'), (2, 'Dollar', 'DOL'), (3, 'Arriary', 'Ar')
-ON DUPLICATE KEY UPDATE id = id;
-
 -- [ EXPENSE SETTINGS ]
 INSERT into `expense_settings` (taux, date_taux) VALUES (100, '2025-01-01');
 

@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.entity.Customer;
+import site.easy.to.build.crm.entity.User;
+import site.easy.to.build.crm.exception.AdminImportException;
 import site.easy.to.build.crm.repository.BudgetRepository;
 
 @Service
@@ -21,6 +23,9 @@ public class BudgetService {
     // Create a new Budget
     @Transactional
     public Budget createBudget(Budget budget) {
+        if (budget.getCreatedAt() == null) {
+            budget.setCreatedAt(LocalDateTime.now());
+        }
         return budgetRepository.save(budget);
     }
     
@@ -67,7 +72,13 @@ public class BudgetService {
         return budgetRepository.save(budget);
     }
 
-    public void saveAll(List<Budget> data) {
-        budgetRepository.saveAll(data);
+    public void saveAll(List<Budget> data, User manager, AdminImportException adminImportException) {
+        for (int i = 0; i < data.size(); i++) {
+            try {
+                createBudget(data.get(i));
+            } catch (Exception e) {
+                adminImportException.getImportException(i+1).addError(e);
+            }
+        }
     }
 }

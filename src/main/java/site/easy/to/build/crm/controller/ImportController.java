@@ -1,6 +1,7 @@
 package site.easy.to.build.crm.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,31 +13,35 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.transaction.Transactional;
 import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.entity.Customer;
+import site.easy.to.build.crm.entity.Expense;
+import site.easy.to.build.crm.entity.User;
 import site.easy.to.build.crm.entity.csv.CrmFiles;
 import site.easy.to.build.crm.entity.csv.results.ImportFileCsvResult;
 import site.easy.to.build.crm.entity.csv.results.ImportMapFilesCsvResult;
 import site.easy.to.build.crm.service.budget.BudgetService;
+import site.easy.to.build.crm.service.csv.CrmImportService;
 import site.easy.to.build.crm.service.csv.importer.BudgetImportService;
 import site.easy.to.build.crm.service.csv.importer.CustomerImportService;
+import site.easy.to.build.crm.service.csv.importer.ExpenseImportService;
 import site.easy.to.build.crm.service.customer.CustomerService;
+import site.easy.to.build.crm.service.expense.ExpenseService;
+import site.easy.to.build.crm.service.user.UserService;
+import site.easy.to.build.crm.util.AuthenticationUtils;
 
 
 @Controller
 @RequestMapping("/employee/import")
-@Transactional  
 public class ImportController {
 
     @Autowired
-    private CustomerImportService customerImportService;
+    private UserService userService;
+    @Autowired
+    private AuthenticationUtils authenticationUtils;
 
     @Autowired
-    private BudgetImportService budgetImportService;
+    private CrmImportService importService;
 
-    @Autowired
-    private BudgetService budgetService;
-    @Autowired
-    private CustomerService customerService;
-
+    
     @GetMapping
     public String importForm(Model model,RedirectAttributes redirectAttributes) {
         model.addAttribute("importData",new CrmFiles());
@@ -45,29 +50,16 @@ public class ImportController {
     }
 
     @PostMapping
-    @Transactional
-    public String postMethodName(@ModelAttribute CrmFiles formData,RedirectAttributes redirectAttributes) {
+    public String postMethodName(@ModelAttribute CrmFiles formData,RedirectAttributes redirectAttributes,Authentication authentication) {
+        int userId = authenticationUtils.getLoggedInUserId(authentication);
+        User manager = userService.findById(userId);
         ImportMapFilesCsvResult importResults =  new ImportMapFilesCsvResult();
         try {
-            // Importation des customers
-            ImportFileCsvResult<Customer> customerResult = customerImportService.importData(formData.getCustomerFile());
-            importResults.addImportFileCsvResult(customerResult);
-    
-            // Persistance de de chaque ligne de donnee
-            customerService.saveAll(customerResult.getData());
-            // Importation de budgets
-            ImportFileCsvResult<Budget> budgetResult = budgetImportService.importData(formData.getBudgetFile());
-            importResults.addImportFileCsvResult(budgetResult);
-    
-            if (importResults.hasErrors()) {
-                redirectAttributes.addFlashAttribute("importErrors",importResults.getErrorHtml());
-                return "redirect:/employee/import";
+            if (formData.getSize() < 3) {
+                throw new RuntimeException("Aucune des 3 fichiers ne doivent etre vide");
             }
-            // Persistance de budget
-            budgetService.saveAll(budgetResult.getData());
-            
-        } catch (Exception e) {
-            e.printStackTrace();
+            importResults = importService.importData(formData,manager);
+        } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("importErrors",e.getMessage());
             return "redirect:/employee/import";
         }

@@ -84,7 +84,6 @@
                       <th>Lead</th>
                       <th>Amount</th>
                       <th>Date Expense</th>
-                      <th>Budget</th>
                       <th>Customer</th>
                       <th>Actions</th>
                     </tr>
@@ -102,7 +101,6 @@
                       </td>
                       <td th:text="${expense.amount}"></td>
                       <td th:text="${expense.dateExpense}"></td>
-                      <td th:text="${expense.budget.description}"></td>
                       <td th:text="${expense.customer.name}"></td>
                       <td>
                         <!-- <a th:href="@{${home} + 'employee/expense/show/' + ${expense.expenseId}}" title="View">

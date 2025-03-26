@@ -62,21 +62,21 @@ public class ExpenseSettingsService {
     // }
     public void checkAlertSeuil(Expense expense) {
         ExpenseSettings expenseSettings=getLatestExpenseSettings();
-        Budget budget = expense.getBudget();
-        double seuil = budget.getAmount().doubleValue() * expenseSettings.getTaux().doubleValue() / 100.0;
-        if (expense.getAmount().doubleValue() >= seuil){
-            // ExpenseAlert expenseAlert = expenseAlertService.getExpenseAlert(expense,expenseSettings.getTaux(),alertTypeService.getAlertTypeById(1), "Le montant de la depense a atteint le seuil d'alerte de "+seuil+"  de taux "+expenseSettings.getTaux()+"%");
-            // return expenseAlert;
-        }
+        // Budget budget = expense.getBudget();
+        // double seuil = budget.getAmount().doubleValue() * expenseSettings.getTaux().doubleValue() / 100.0;
+        // if (expense.getAmount().doubleValue() >= seuil){
+        //     // ExpenseAlert expenseAlert = expenseAlertService.getExpenseAlert(expense,expenseSettings.getTaux(),alertTypeService.getAlertTypeById(1), "Le montant de la depense a atteint le seuil d'alerte de "+seuil+"  de taux "+expenseSettings.getTaux()+"%");
+        //     // return expenseAlert;
+        // }
     }
 
     public void checkBudgetDepassement(Expense expense) {
-        Budget budget = expense.getBudget();
-        if (expense.getAmount().doubleValue() > budget.getAmount().doubleValue()) {
-            // ExpenseAlert expenseAlert = expenseAlertService.getExpenseAlert(expense,null,alertTypeService.getAlertTypeById(2), "Le montant de la depense a depasse la limite du budget de "+budget.getAmount()+"");
-            // return expenseAlert;
-        }
-        // return null;
+        // Budget budget = expense.getBudget();
+        // if (expense.getAmount().doubleValue() > budget.getAmount().doubleValue()) {
+        //     // ExpenseAlert expenseAlert = expenseAlertService.getExpenseAlert(expense,null,alertTypeService.getAlertTypeById(2), "Le montant de la depense a depasse la limite du budget de "+budget.getAmount()+"");
+        //     // return expenseAlert;
+        // }
+        // // return null;
     }
 }
 

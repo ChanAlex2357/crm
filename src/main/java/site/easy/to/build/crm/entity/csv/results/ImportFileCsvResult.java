@@ -18,7 +18,7 @@ public class ImportFileCsvResult<T>{
     public ImportFileCsvResult (MultipartFile file){
         setFileSource(file);
         setData(new ArrayList<T>());
-        setExceptions(new AdminImportException());
+        setExceptions(new AdminImportException(file));
     }
     public void addData(T data) {
         this.data.add(data);

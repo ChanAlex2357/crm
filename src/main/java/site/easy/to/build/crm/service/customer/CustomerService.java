@@ -2,6 +2,8 @@ package site.easy.to.build.crm.service.customer;
 
 
 import site.easy.to.build.crm.entity.Customer;
+import site.easy.to.build.crm.entity.User;
+import site.easy.to.build.crm.exception.AdminImportException;
 
 import java.util.List;
 
@@ -21,10 +23,8 @@ public interface CustomerService {
 
     public List<Customer> findAll();
 
-    @Transactional
     public Customer save(Customer customer);
     
-    @Transactional
     public Customer createNewCustomer(Customer customer);
 
     public void delete(Customer customer);
@@ -33,7 +33,7 @@ public interface CustomerService {
 
     long countByUserId(int userId);
 
-    @Transactional
     public void saveAll(List<Customer> customers);
+    public void saveAll(List<Customer> customers,User manager,AdminImportException importException);
 
 }

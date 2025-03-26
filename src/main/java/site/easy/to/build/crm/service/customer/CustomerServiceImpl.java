@@ -11,12 +11,13 @@ import site.easy.to.build.crm.service.budget.BudgetService;
 import site.easy.to.build.crm.util.EmailTokenUtils;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.CustomerLoginInfo;
+import site.easy.to.build.crm.entity.User;
+import site.easy.to.build.crm.exception.AdminImportException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@Transactional
 public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
@@ -79,6 +80,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public Customer createNewCustomer(Customer customer) {
         // Create an customer login info
         CustomerLoginInfo customerLoginInfo = new CustomerLoginInfo();
@@ -105,6 +107,19 @@ public class CustomerServiceImpl implements CustomerService {
     public void saveAll(List<Customer> customers) {
         for (Customer customer : customers) {
             createNewCustomer(customer);
+        }
+    }
+
+    @Override
+    public void saveAll(List<Customer> customers, User manager , AdminImportException importException) {
+        int i = 1;
+        for (Customer customer : customers) {
+            try {
+                customer.setUser(manager);
+                createNewCustomer(customer);
+            } catch (Exception e) {
+                importException.getImportException(i).addError((e));
+            }
         }
     }
 }

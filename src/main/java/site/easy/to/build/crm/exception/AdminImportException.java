@@ -2,13 +2,17 @@ package site.easy.to.build.crm.exception;
 
 import java.util.HashMap;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import site.easy.to.build.crm.enums.ImportErrorStatus;
 public class AdminImportException extends RuntimeException {
     private HashMap<Integer,ImportException> errors;
     private ImportErrorStatus errorStatus ;
-    public AdminImportException(){
+    private MultipartFile fileSource;
+    public AdminImportException(MultipartFile file){
         setErrors(new HashMap<Integer,ImportException>());
         this.errorStatus = new ImportErrorStatus();
+        this.fileSource = file;
     }
     private void addError(ImportException importException) {
         getErrors().put(importException.getLine(), importException);
@@ -19,6 +23,10 @@ public class AdminImportException extends RuntimeException {
 
     private void setErrors(HashMap<Integer, ImportException> errors) {
         this.errors = errors;
+    }
+
+    public MultipartFile getFileSource() {
+        return fileSource;
     }
 
     public HashMap<Integer, ImportException> getErrors() {

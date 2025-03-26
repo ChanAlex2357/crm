@@ -40,7 +40,7 @@ public class BudgetController {
     private final AuthenticationUtils authenticationUtils;
 
     @Autowired
-    private CustomerService customerService;
+private CustomerService customerService;
 
     BudgetController( AuthenticationUtils authenticationUtils, UserServiceImpl userServiceImpl) {
         this.authenticationUtils = authenticationUtils;
@@ -69,11 +69,16 @@ public class BudgetController {
     }
 
     @PostMapping("/employee/budget/create")
-    public String createBudget(@ModelAttribute("budget") @Valid Budget budget, BindingResult bindingResult, Model model) {
+    public String createBudget(@ModelAttribute("budget") @Valid Budget budget, BindingResult bindingResult, Model model , @RequestParam int customer) {
         if(bindingResult.hasErrors()){
             // Return to the create view if validation errors occur
             return "budget/create";
         }
+        Customer cust = customerService.findByCustomerId(customer);
+        if (cust == null) {
+            return "redirect:/employee/budget/create";
+        }
+        budget.setCustomer(cust);
         budgetService.createBudget(budget);
         return "redirect:/employee/budget/show-all";
     }
@@ -86,7 +91,8 @@ public class BudgetController {
         if (user.isInactiveUser()) {
             return "error/account-inactive";
         }
-        model.addAttribute("budgets", budgetService.getAllBudgets());
+        List<Budget> budgets = budgetService.getAllBudgets();
+        model.addAttribute("budgets", budgets);
         return "budget/budgets";
     }
 

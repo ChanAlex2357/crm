@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import site.easy.to.build.crm.entity.Customer;
+import site.easy.to.build.crm.entity.User;
 import site.easy.to.build.crm.entity.csv.mapping.CustomerMapping;
 import site.easy.to.build.crm.entity.csv.results.ImportFileCsvResult;
 import site.easy.to.build.crm.exception.ImportException;
@@ -27,7 +28,7 @@ public class CustomerImportService  implements ICsvImporter<Customer,CustomerMap
 
     // - Fonctions importation de donnee
     @Transactional
-    public ImportFileCsvResult<Customer> importData(MultipartFile file){
+    public ImportFileCsvResult<Customer> importData(MultipartFile file) {
         // Prepare the result
         ImportFileCsvResult<Customer> result = new ImportFileCsvResult<Customer>(file);
         List<CustomerMapping> csvRecords = csvParser.parseCSV(file,CustomerMapping.class,';');
@@ -57,4 +58,6 @@ public class CustomerImportService  implements ICsvImporter<Customer,CustomerMap
     public void validation(Customer entity, ImportException exception) {
         constrainValidator.validateConstraint(entity, exception);
     }
+
+   
 }

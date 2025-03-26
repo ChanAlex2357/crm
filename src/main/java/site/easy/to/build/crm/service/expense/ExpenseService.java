@@ -9,15 +9,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
-import org.springframework.transaction.annotation.Transactional;
+import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
-import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.Expense;
 import site.easy.to.build.crm.entity.Lead;
 import site.easy.to.build.crm.entity.Ticket;
+import site.easy.to.build.crm.entity.User;
+import site.easy.to.build.crm.exception.AdminImportException;
+import site.easy.to.build.crm.exception.ImportException;
 import site.easy.to.build.crm.repository.ExpenseRepository;
+import site.easy.to.build.crm.service.lead.LeadService;
+import site.easy.to.build.crm.service.ticket.TicketService;
 
 @Service
 public class ExpenseService {
@@ -30,6 +34,13 @@ public class ExpenseService {
 
     @Autowired
     private ExpenseRepository expenseRepository;
+
+    @Autowired
+    private LeadService leadService;
+    
+    @Autowired
+    private TicketService ticketService;
+
     
     @Transactional
     // Create a new expense
@@ -65,24 +76,22 @@ public class ExpenseService {
     }
 
     @Transactional
-    public Expense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,Ticket ticket) {
+    public Expense createCustomerExpense(double amount,String dateExpense,Customer customer,Ticket ticket) {
         Expense expense = new Expense();
         expense.setTicket(ticket);
-        return createCustomerExpense(amount, dateExpense, budget, customer, expense);
+        return createCustomerExpense(amount, dateExpense, customer, expense);
     }
     @Transactional
-    public Expense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,Expense expense) {
+    public Expense createCustomerExpense(double amount,String dateExpense,Customer customer,Expense expense) {
         expense.setAmount(BigDecimal.valueOf(amount));
         expense.setDateExpense(dateExpense);
         expense.setCustomer(customer);
-        expense.setBudget(budget);
         createExpense(expense);
-        
         return expense;
     }
 
     @Transactional
-    public Expense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,Expense expense,BindingResult bindingResult) {
+    public Expense createCustomerExpense(double amount,String dateExpense,Customer customer,Expense expense,BindingResult bindingResult) {
     
         Set<ConstraintViolation<Expense>> violations = validator.validate(expense);
         if (!violations.isEmpty()) {
@@ -94,14 +103,44 @@ public class ExpenseService {
         if (bindingResult.hasErrors()) {
             return null;
         }
-        return createCustomerExpense(amount, dateExpense, budget, customer, expense);
+        return createCustomerExpense(amount, dateExpense,customer, expense);
     }
     
     @Transactional
-    public Expense createCustomerExpense(double amount,String dateExpense,Budget budget,Customer customer,Lead lead) {
+    public Expense createCustomerExpense(double amount,String dateExpense,Customer customer,Lead lead) {
         Expense expense = new Expense();
         expense.setLead(lead);
-        return createCustomerExpense(amount, dateExpense, budget, customer, expense);
+        return createCustomerExpense(amount, dateExpense, customer, expense);
+    }
+
+    @Transactional
+    public void saveAll(List<Expense> data,User manager,AdminImportException importException) {
+
+        int line = 1;
+        
+        for (Expense expense : data) {
+            try {
+            if (expense.getLead() == null && expense.getTicket() == null) { 
+                    throw new IllegalArgumentException("Expense must have a lead or a ticket.");
+                }
+                
+                if (expense.getLead() != null) {
+                    expense.getLead().setManager(manager);
+                    expense.getLead().setEmployee(manager);
+                    Lead ld =leadService.save(expense.getLead());
+                    expense.setLead(ld);
+                }
+                else if (expense.getTicket() != null) {
+                    expense.getTicket().setManager(manager);
+                    expense.getTicket().setEmployee(manager);
+                    Ticket tk = ticketService.save(expense.getTicket());
+                    expense.setTicket(tk);
+                }
+                createExpense(expense);
+            } catch (Exception e) {
+                importException.getImportException(line).addError(e.getMessage());
+            }
+        }
     }
 }
 

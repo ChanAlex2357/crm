@@ -38,7 +38,7 @@ public class BudgetImportService implements ICsvImporter<Budget, BudgetMapping> 
     @Transactional
     public ImportFileCsvResult<Budget> importData(MultipartFile file) {
         ImportFileCsvResult<Budget> result = new ImportFileCsvResult<>(file);
-        List<BudgetMapping> csvRecords = csvParser.parseCSV(file, BudgetMapping.class, ',');
+        List<BudgetMapping> csvRecords = csvParser.parseCSV(file, BudgetMapping.class, ';');
 
         int line = 1;
         for (BudgetMapping budgetMapping : csvRecords) {

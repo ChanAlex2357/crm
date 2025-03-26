@@ -22,7 +22,6 @@ import site.easy.to.build.crm.util.AuthenticationUtils;
 import site.easy.to.build.crm.util.AuthorizationUtil;
 import jakarta.validation.Valid;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -93,8 +92,8 @@ public class ExpenseController {
         if(bindingResult.hasErrors()){
             return "expense/create";
         }
-        expense.setCreatedAt(LocalDateTime.now());
-        expense.setUpdatedAt(LocalDateTime.now());
+        // expense.setCreatedAt(LocalDateTime.now());
+        // expense.setUpdatedAt(LocalDateTime.now());
         // Assume dateExpense is already populated (or set it here if needed)
         expenseService.createExpense(expense);
         return "redirect:/employee/expense/show-all";
@@ -130,7 +129,7 @@ public class ExpenseController {
         if(bindingResult.hasErrors()){
             return "expense/update";
         }
-        expense.setUpdatedAt(LocalDateTime.now());
+        // expense.setUpdatedAt(LocalDateTime.now());
         expenseService.updateExpense(expense);
         return "redirect:/employee/expense/show-all";
     }

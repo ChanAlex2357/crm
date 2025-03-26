@@ -137,6 +137,38 @@
                                 </div>
                                 <!-- Expense Form Part -->
                                 <div th:insert="~{/general/expense-part.html}"></div>
+
+                                <label class="m-t-20" for="customerId">Customer:</label>
+                                <div class="input-group">
+                                    <select name="customerId" id="customerId" class="form-control">
+                                        <option th:each="customer : ${customers}" th:text="${customer.name}" th:value="${customer.customerId}"></option>
+                                    </select>
+                                </div>
+
+                                <!-- Amount -->
+                                <label class="m-t-20" for="amount">Amount:</label>
+                                <div class="input-group">
+                                <input type="text" id="amount" name="amount" class="form-control" />
+                                </div>
+                                <!-- Bootstrap Modal -->
+                                <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="confirmationModalLabel">Confirm Amount</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div id="confirmations" class="mb-3"></div>
+                                                <p>Are you sure you want to proceed with this amount?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="confirmationModal">Cancel</button>
+                                                <button type="button" class="btn btn-primary" id="confirmSubmit">Confirm</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <button type="submit" class="btn btn-primary m-t-20">Create ticket</button>
                             </form>
                         </div>

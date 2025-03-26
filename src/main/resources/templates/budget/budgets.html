@@ -82,9 +82,6 @@
                                         <th>#</th>
                                         <th>Customer</th>
                                         <th>Amount</th>
-                                        <th>Currency</th>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
                                         <th>Description</th>
                                         <th>Actions</th>
                                     </tr>
@@ -94,9 +91,6 @@
                                         <td th:text="${budget.budgetId}"></td>
                                         <td th:text="${budget.customer.name}"></td>
                                         <td th:text="${budget.amount}"></td>
-                                        <td th:text="${budget.currency.libelle}"></td>
-                                        <td th:text="${budget.startDate}"></td>
-                                        <td th:text="${budget.endDate}"></td>
                                         <td th:text="${budget.description}"></td>
                                         <td>
                                             <a th:href="@{${home} + 'employee/budget/show/' + ${budget.budgetId}}" title="View">

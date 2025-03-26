@@ -188,8 +188,7 @@ public class LeadController {
                              Authentication authentication, @RequestParam("allFiles")@Nullable String files,
                              @RequestParam("folderId") @Nullable String folderId, Model model,
                              @RequestParam("amount") @NotNull double amount,
-                             @RequestParam("dateExpense") @NotNull String dateExpense,
-                             @RequestParam("budgetId") int budgetId) throws JsonProcessingException {
+                             @RequestParam("dateExpense") @NotNull String dateExpense) throws JsonProcessingException {
 
         int userId = authenticationUtils.getLoggedInUserId(authentication);
         User manager = userService.findById(userId);
@@ -230,13 +229,13 @@ public class LeadController {
         }
 
         Lead createdLead = leadService.save(lead);
-        Budget budget = budgetService.getBudgetById(budgetId);
-        if (budget == null) {
-            User user = userService.findById(userId);
-            populateModelAttributes(model, authentication, user);
-            return "lead/create-lead";
-        }
-        expenseService.createExpense(amount, dateExpense, budget, customer, createdLead);
+        // Budget budget = budgetService.getBudgetById(budgetId);
+        // if (budget == null) {
+        //     User user = userService.findById(userId);
+        //     populateModelAttributes(model, authentication, user);
+        //     return "lead/create-lead";
+        // }
+        expenseService.createCustomerExpense(amount, dateExpense, customer, createdLead);
 
         fileUtil.saveFiles(allFiles, createdLead);
 

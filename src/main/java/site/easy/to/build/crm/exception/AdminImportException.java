@@ -1,38 +1,47 @@
 package site.easy.to.build.crm.exception;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import site.easy.to.build.crm.enums.ImportErrorStatus;
 public class AdminImportException extends RuntimeException {
-    
-    private List<ImportException> errors ;
-    public AdminImportException() {
-        super("Error while importing data");
-        setErrors(new ArrayList<>());
+    private HashMap<Integer,ImportException> errors;
+    private ImportErrorStatus errorStatus ;
+    private MultipartFile fileSource;
+    public AdminImportException(MultipartFile file){
+        setErrors(new HashMap<Integer,ImportException>());
+        this.errorStatus = new ImportErrorStatus();
+        this.fileSource = file;
+    }
+    private void addError(ImportException importException) {
+        getErrors().put(importException.getLine(), importException);
+    }
+    public boolean hasErrors() {
+        return errorStatus.isError();
     }
 
-    public AdminImportException(List<ImportException> errors) {
-        this();
-        setErrors(errors);
-    }
-
-    public List<ImportException> getErrors() {
-        return errors;
-    }
-
-    private void setErrors(List<ImportException> errors) {
+    private void setErrors(HashMap<Integer, ImportException> errors) {
         this.errors = errors;
     }
 
-    public void addError(ImportException error) {
-        errors.add(error);
-    }
-    public void addError(String message , int line) {
-        addError(new ImportException(message, line));
+    public MultipartFile getFileSource() {
+        return fileSource;
     }
 
-    public boolean hasErrors() {
-        return errors != null && !getErrors().isEmpty();
+    public HashMap<Integer, ImportException> getErrors() {
+        return errors;
+    }
+    public ImportException getImportException(int line){
+        return getErrors().get(line);
+    }
+    public ImportException getOrCreate(int line){
+        ImportException e = getImportException(line);
+        if (e == null) {
+            e = new ImportException(line,this.errorStatus);
+            addError(e);
+        }
+        return e;
     }
     
 }

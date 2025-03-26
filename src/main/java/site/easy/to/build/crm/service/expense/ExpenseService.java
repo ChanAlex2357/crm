@@ -9,18 +9,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
-import org.springframework.transaction.annotation.Transactional;
+import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
-import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.Expense;
-import site.easy.to.build.crm.entity.ExpenseAlert;
 import site.easy.to.build.crm.entity.Lead;
 import site.easy.to.build.crm.entity.Ticket;
-import site.easy.to.build.crm.entity.dto.ExpenseTotalDTO;
+import site.easy.to.build.crm.entity.User;
+import site.easy.to.build.crm.exception.AdminImportException;
+import site.easy.to.build.crm.exception.ImportException;
 import site.easy.to.build.crm.repository.ExpenseRepository;
-import site.easy.to.build.crm.service.budget.BudgetService;
+import site.easy.to.build.crm.service.lead.LeadService;
+import site.easy.to.build.crm.service.ticket.TicketService;
 
 @Service
 public class ExpenseService {
@@ -29,15 +30,17 @@ public class ExpenseService {
     private ExpenseSettingsService expenseSettingsService;
 
     @Autowired
-    private ExpenseAlertService expenseAlertService;
-    @Autowired
     private Validator validator;
 
     @Autowired
     private ExpenseRepository expenseRepository;
 
     @Autowired
-    private BudgetService budgetService;
+    private LeadService leadService;
+    
+    @Autowired
+    private TicketService ticketService;
+
     
     @Transactional
     // Create a new expense
@@ -78,37 +81,22 @@ public class ExpenseService {
     }
 
     @Transactional
-    public Expense createExpense(double amount,String dateExpense,Budget budget,Customer customer,Ticket ticket) {
+    public Expense createCustomerExpense(double amount,String dateExpense,Customer customer,Ticket ticket) {
         Expense expense = new Expense();
         expense.setTicket(ticket);
-        return createExpense(amount, dateExpense, budget, customer, expense);
+        return createCustomerExpense(amount, dateExpense, customer, expense);
     }
     @Transactional
-    public Expense createExpense(double amount,String dateExpense,Budget budget,Customer customer,Expense expense) {
+    public Expense createCustomerExpense(double amount,String dateExpense,Customer customer,Expense expense) {
         expense.setAmount(BigDecimal.valueOf(amount));
         expense.setDateExpense(dateExpense);
         expense.setCustomer(customer);
-        expense.setBudget(budget);
-
         createExpense(expense);
-        List<ExpenseAlert> alerts = expenseSettingsService.checkExpenseAlerts(expense);
-        System.out.println(alerts);
-        for (ExpenseAlert expenseAlert : alerts) {
-            expenseAlertService.createExpenseAlert(expenseAlert);
-        }
-
-        // Calculer le reste du budget
-        double reste = budget.getAmount().doubleValue() - expense.getDoubleAmount();
-        if (reste < 0) {reste = 0;}
-        budget.setReste(BigDecimal.valueOf(reste));
-        // Mettre a jour le budget
-        budgetService.updateBudget(budget);
-
         return expense;
     }
 
     @Transactional
-    public Expense createExpense(double amount,String dateExpense,Budget budget,Customer customer,Expense expense,BindingResult bindingResult) {
+    public Expense createCustomerExpense(double amount,String dateExpense,Customer customer,Expense expense,BindingResult bindingResult) {
     
         Set<ConstraintViolation<Expense>> violations = validator.validate(expense);
         if (!violations.isEmpty()) {
@@ -120,53 +108,43 @@ public class ExpenseService {
         if (bindingResult.hasErrors()) {
             return null;
         }
-        return createExpense(amount, dateExpense, budget, customer, expense);
+        return createCustomerExpense(amount, dateExpense,customer, expense);
     }
     
     @Transactional
-    public Expense createExpense(double amount,String dateExpense,Budget budget,Customer customer,Lead lead) {
+    public Expense createCustomerExpense(double amount,String dateExpense,Customer customer,Lead lead) {
         Expense expense = new Expense();
         expense.setLead(lead);
-        return createExpense(amount, dateExpense, budget, customer, expense);
+        return createCustomerExpense(amount, dateExpense, customer, expense);
     }
 
-    public List<ExpenseTotalDTO> getAllExpensesWithDetails() {
-        return expenseRepository.findAllExpensesWithDetails();
-    }
-    
-    public List<ExpenseTotalDTO> getExpensesByCustomerId(Integer customerId) {
-        return expenseRepository.findExpensesByCustomerId(customerId);
-    }
+    @Transactional
+    public void saveAll(List<Expense> data,User manager,AdminImportException importException) {
 
-    public List<Expense> getExpenseByBudget(Budget budget){
-        return getExpenseByBudget(budget.getBudgetId());
-    }
-    public List<Expense> getExpenseByBudget(int budget_id){
-        return expenseRepository.findByBudgetBudgetId(budget_id);
-    }
-
-    public List<Expense> getExpenseByLead(int leadId) {
-        return expenseRepository.findByLeadLeadId(leadId);
-    }
-
-    public List<Expense> getExpenseByTicket(int ticketId) {
-        return expenseRepository.findByTicketTicketId(ticketId);
-    }
-
-    public void deleteExpenseOf(Lead lead){
-        try {
-            Expense eexpense = getExpenseByLead(lead.getLeadId()).get(0);
-            deleteExpense(eexpense.getExpenseId());
-        } catch (IndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Le lead n'a pas d'expense");
-        }
-    }
-    public void deleteExpenseOf(Ticket ticket){
-        try {
-            Expense eexpense = getExpenseByTicket(ticket.getTicketId()).get(0);
-            deleteExpense(eexpense.getExpenseId());
-        } catch (IndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Le lead n'a pas d'expense");
+        int line = 1;
+        
+        for (Expense expense : data) {
+            try {
+            if (expense.getLead() == null && expense.getTicket() == null) { 
+                    throw new IllegalArgumentException("Expense must have a lead or a ticket.");
+                }
+                
+                if (expense.getLead() != null) {
+                    expense.getLead().setManager(manager);
+                    expense.getLead().setEmployee(manager);
+                    Lead ld =leadService.save(expense.getLead());
+                    expense.setLead(ld);
+                }
+                else if (expense.getTicket() != null) {
+                    expense.getTicket().setManager(manager);
+                    expense.getTicket().setEmployee(manager);
+                    Ticket tk = ticketService.save(expense.getTicket());
+                    expense.setTicket(tk);
+                }
+                createExpense(expense);
+            } catch (Exception e) {
+                importException.getImportException(line).addError(e.getMessage());
+            }
         }
     }
 }

@@ -23,15 +23,5 @@ public interface ExpenseTotalDTO {
     String getTicketSubject();
     String getTicketStatus();
     String getTicketPriority();
-    
-    // Budget information
-    Integer getBudgetId();
-    Double getBudgetAmount();
-    // Date getBudgetStartDate();
-    // Date getBudgetEndDate();
-    
-    // Currency information
-    Integer getCurrencyId();
-    String getCurrencyName();
-    String getCurrencyValue();
+
 }

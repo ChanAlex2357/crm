@@ -55,6 +55,7 @@ public class CustomerProfileController {
         } catch (RuntimeException e) {
             return "error/not-found";
         }
+        
         model.addAttribute("customer", customer);
         model.addAttribute("settingsTab", false);
         return "customer-profile";

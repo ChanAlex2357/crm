@@ -29,14 +29,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
                 ticket_id as ticketId,
                 ticket_subject as ticketSubject,
                 ticket_status as ticketStatus,
-                ticket_priority as ticketPriority,
-                
-                budget_id as budgetId,
-                budget_amount as budgetAmount,
-
-                currency_id as currencyId,
-                currency_name as currencyName,
-                currency_value as currencyValue
+                ticket_priority as ticketPriority
             from customer_expense_cpl ce
             """
     , nativeQuery = true) 
@@ -44,9 +37,6 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
     
     @Query(value = "SELECT * FROM customer_expense_cpl c WHERE c.customerId = :customerId" , nativeQuery = true)
     List<ExpenseTotalDTO> findExpensesByCustomerId(Integer customerId);
-
-
-    List<Expense> findByBudgetBudgetId(int budget_id);
 
     List<Expense> findByLeadLeadId(int leadId);
     List<Expense> findByTicketTicketId(int ticketId);

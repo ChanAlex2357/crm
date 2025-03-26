@@ -1,5 +1,6 @@
 package site.easy.to.build.crm.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,7 @@ import site.easy.to.build.crm.entity.OAuthUser;
 import site.easy.to.build.crm.entity.User;
 import site.easy.to.build.crm.google.service.acess.GoogleAccessService;
 import site.easy.to.build.crm.google.service.gmail.GoogleGmailApiService;
+import site.easy.to.build.crm.service.budget.BudgetService;
 import site.easy.to.build.crm.service.contract.ContractService;
 import site.easy.to.build.crm.service.customer.CustomerLoginInfoService;
 import site.easy.to.build.crm.service.customer.CustomerService;
@@ -42,6 +44,9 @@ public class CustomerController {
     private final TicketService ticketService;
     private final ContractService contractService;
     private final LeadService leadService;
+
+    @Autowired
+    private BudgetService  budgetService;
 
     
     public CustomerController(CustomerService customerService, UserService userService, CustomerLoginInfoService customerLoginInfoService,
@@ -100,6 +105,7 @@ public class CustomerController {
             return "redirect:/access-denied";
         }
 
+        model.addAttribute("budget",budgetService.getBudgetEtat(customer));
         model.addAttribute("customer",customer);
         return "customer/customer-details";
     }

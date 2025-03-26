@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
@@ -29,11 +30,6 @@ import site.easy.to.build.crm.service.ticket.TicketService;
 @Service
 public class ExpenseService {
 
-    private final LeadRepository leadRepository;
-
-    @Autowired
-    private ExpenseSettingsService expenseSettingsService;
-
     @Autowired
     private Validator validator;
 
@@ -41,17 +37,13 @@ public class ExpenseService {
     private ExpenseRepository expenseRepository;
 
     @Autowired
+    @Lazy
     private LeadService leadService;
     
     @Autowired
+    @Lazy
     private TicketService ticketService;
 
-
-    ExpenseService(LeadRepository leadRepository) {
-        this.leadRepository = leadRepository;
-    }
-
-    
     @Transactional
     // Create a new expense
     public Expense createExpense(Expense expense) {

@@ -122,4 +122,9 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
     }
+
+    long countByUserId(){
+        List<Customer> customers = customerRepository.findAll();
+        return customers.size();
+    }
 }

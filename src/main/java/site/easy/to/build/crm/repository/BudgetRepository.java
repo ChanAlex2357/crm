@@ -13,13 +13,9 @@ import site.easy.to.build.crm.entity.dto.BudgetEtatDTO;
 public interface BudgetRepository extends JpaRepository<Budget, Integer> {
     List<Budget> findByCustomerCustomerId(int customerId);
 
-    @Query(value = "SELECT customer_id as customerId, entree, sortie, reste FROM v_etat_budget", nativeQuery = true)
+    @Query(value = "SELECT customer_id as customerId, entree, sortie, reste , name FROM v_etat_budget_cpl", nativeQuery = true)
     List<BudgetEtatDTO> findAllBudgetEtats();
     
-    
-    @Query(value = "SELECT customer_id as customerId, entree, sortie, reste FROM v_etat_budget WHERE customer_id = :id", nativeQuery = true)
+    @Query(value = "SELECT customer_id as customerId, entree, sortie, reste , name FROM v_etat_budget_cpl WHERE customer_id = :id", nativeQuery = true)
     List<BudgetEtatDTO> findAllBudgetEtatsByCustomer(int id);
-
-
-
 }

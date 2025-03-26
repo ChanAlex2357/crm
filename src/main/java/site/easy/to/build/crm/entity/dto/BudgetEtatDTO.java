@@ -4,4 +4,5 @@ public interface BudgetEtatDTO {
     Double getEntree();
     Double getSortie();
     Double getReste();
+    String getName();
 }

@@ -20,6 +20,7 @@ import site.easy.to.build.crm.entity.Ticket;
 import site.easy.to.build.crm.entity.User;
 import site.easy.to.build.crm.entity.dto.ExpenseTotalDTO;
 import site.easy.to.build.crm.entity.dto.LeadDTO;
+import site.easy.to.build.crm.entity.dto.TicketDTO;
 import site.easy.to.build.crm.exception.AdminImportException;
 import site.easy.to.build.crm.exception.ImportException;
 import site.easy.to.build.crm.repository.ExpenseRepository;
@@ -170,6 +171,10 @@ public class ExpenseService {
 
     public List<ExpenseTotalDTO> getAllExpensesWithDetails() {
         return expenseRepository.findAllExpensesWithDetails();
+    }
+
+    public List<Expense> getExpenseByTicket(int ticketId) {
+        return expenseRepository.findByTicketTicketId(ticketId);
     }
 }
 

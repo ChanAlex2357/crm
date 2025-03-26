@@ -82,4 +82,5 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
             WHERE customer_id = :customerId
             """, nativeQuery = true)
     List<TicketDTO> findTicketsByCustomerId(Integer customerId);
+
 }

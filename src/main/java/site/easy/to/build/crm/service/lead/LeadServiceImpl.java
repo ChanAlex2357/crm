@@ -1,6 +1,7 @@
 package site.easy.to.build.crm.service.lead;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,12 +17,12 @@ import java.util.List;
 public class LeadServiceImpl implements LeadService {
 
     private final LeadRepository leadRepository;
+    private final ExpenseService expenseService;
 
     @Autowired
-    private ExpenseService expenseService;
-
-    public LeadServiceImpl(LeadRepository leadRepository) {
+    public LeadServiceImpl(LeadRepository leadRepository, @Lazy ExpenseService expenseService) {
         this.leadRepository = leadRepository;
+        this.expenseService = expenseService;
     }
 
     @Override

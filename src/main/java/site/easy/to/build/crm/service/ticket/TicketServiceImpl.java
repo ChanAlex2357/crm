@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Lazy;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.repository.TicketRepository;
 import site.easy.to.build.crm.service.expense.ExpenseService;
@@ -18,7 +19,9 @@ public class TicketServiceImpl implements TicketService{
     private final TicketRepository ticketRepository;
 
     @Autowired
+    @Lazy
     private ExpenseService expenseService;
+
     public TicketServiceImpl(TicketRepository ticketRepository) {
         this.ticketRepository = ticketRepository;
     }
@@ -103,5 +106,8 @@ public class TicketServiceImpl implements TicketService{
 
     public List<TicketDTO> getAllTicketCpl(){
         return ticketRepository.findAllTicketsWithDetails();
+    }
+    public TicketDTO getTicketCpl(int id){
+        return  ticketRepository.findTicketsWithDetails(id);
     }
 }

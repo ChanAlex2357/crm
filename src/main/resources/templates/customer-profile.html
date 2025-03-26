@@ -129,6 +129,8 @@
                                     <p class="m-t-30" th:utext="${customer.description}"></p>
                                 </div>
                             </div>
+
+                            
                             <div th:class="${settingsTab ? 'tab-pane active' :'tab-pane'}" id="settings" role="tabpanel">
                                 <div class="card-body">
                                     <form th:object="${customer}" th:action="@{/customer/profile/update}" method="post">
@@ -227,6 +229,19 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <h2>Entree</h2>
+                        <div class="col" th:text="${budget.entree}"></div>
+                        <h2>Sortie</h2>
+                        <div class="col" th:text="${budget.sortie}"></div>
+                        <h2>Reste</h2>
+                        <div class="col" th:text="${budget.reste}"></div>
                     </div>
                 </div>
             </div>

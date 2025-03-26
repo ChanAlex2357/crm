@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.User;
+import site.easy.to.build.crm.entity.dto.BudgetEtatDTO;
 import site.easy.to.build.crm.service.customer.CustomerService;
 import site.easy.to.build.crm.service.customer.CustomerServiceImpl;
 import site.easy.to.build.crm.service.user.UserServiceImpl;
@@ -94,6 +95,18 @@ private CustomerService customerService;
         List<Budget> budgets = budgetService.getAllBudgets();
         model.addAttribute("budgets", budgets);
         return "budget/budgets";
+    }
+    @GetMapping("/employee/budget/etat")
+    public String allBudget(Model model, Authentication authentication) {
+        // Verification des droits d'acces
+        int userId = authenticationUtils.getLoggedInUserId(authentication);
+        User user = userService.findById(userId);
+        if (user.isInactiveUser()) {
+            return "error/account-inactive";
+        }
+        List<BudgetEtatDTO> budgets = budgetService.getAllBudgetEtats();
+        model.addAttribute("budgets", budgets);
+        return "budget/etats";
     }
 
     @GetMapping("/employee/budget/show/{id}")
@@ -181,5 +194,17 @@ private CustomerService customerService;
         // Optional: check if user is authorized to delete the budget
         budgetService.deleteBudget(id);
         return "redirect:/employee/budget/show-all";
+    }
+
+    @GetMapping("/budgets")
+    public String getAllBudgetEtats(Model model) {
+        model.addAttribute("budgets", budgetService.getAllBudgetEtats());
+        return "budgets";
+    }
+
+    @GetMapping("/budgets/{customerId}")
+    public String getAllBudgetEtatsByCustomer(@PathVariable int customerId, Model model) {
+        model.addAttribute("budgets", budgetService.getAllBudgetEtatsByCustomer(customerId));
+        return "budgets";
     }
 }

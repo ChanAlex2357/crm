@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.User;
+import site.easy.to.build.crm.entity.dto.BudgetEtatDTO;
 import site.easy.to.build.crm.exception.AdminImportException;
 import site.easy.to.build.crm.repository.BudgetRepository;
 
@@ -49,7 +50,13 @@ public class BudgetService {
     
     // Retrieve all Budgets
     public List<Budget> getAllBudgets() {
-        return budgetRepository.findAll();
+        try {
+            List<Budget> budgets = budgetRepository.findAll();
+            return budgets;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     
     // Retrieve a Budget by its id
@@ -72,6 +79,11 @@ public class BudgetService {
         return budgetRepository.save(budget);
     }
 
+    public BudgetEtatDTO getBudgetEtat(Customer customer) {
+        List<BudgetEtatDTO> dd = budgetRepository.findAllBudgetEtatsByCustomer(customer.getCustomerId());
+        return dd.get(0);
+    }
+
     public void saveAll(List<Budget> data, User manager, AdminImportException adminImportException) {
         for (int i = 0; i < data.size(); i++) {
             try {
@@ -80,5 +92,23 @@ public class BudgetService {
                 adminImportException.getImportException(i+1).addError(e);
             }
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<BudgetEtatDTO> getAllBudgetEtats() {
+        return budgetRepository.findAllBudgetEtats();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BudgetEtatDTO> getAllBudgetEtatsByCustomer(int customerId) {
+        List<BudgetEtatDTO> budgetEtats = budgetRepository.findAllBudgetEtatsByCustomer(customerId);
+        // Force the loading of proxy values
+        budgetEtats.forEach(budgetEtat -> {
+            budgetEtat.getCustomerId();
+            budgetEtat.getEntree();
+            budgetEtat.getSortie();
+            budgetEtat.getReste();
+        });
+        return budgetEtats;
     }
 }

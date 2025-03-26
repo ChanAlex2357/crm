@@ -34,12 +34,6 @@ public class Budget {
     @DecimalMax(value = "9999999.99", inclusive = true, message = "Amount must be less than or equal to 9999999.99")
     private BigDecimal amount;
 
-
-    @Column(name = "reste", nullable = false, precision = 10, scale = 2)
-    @NotNull(message = "Amount is required")
-    @Digits(integer = 15, fraction = 2, message = "Amount must be a valid number with up to 2 decimal places")
-    private BigDecimal reste;
-
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 

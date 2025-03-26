@@ -1,4 +1,4 @@
-<label class="m-t-20" for="customerId">Customer:</label>
+<label class="m-t-20" for="customerId">Customer:</label><span id="budget">0</span>
 <div class="input-group">
     <select name="customerId" id="customerId" class="form-control">
         <option th:each="customer : ${customers}" th:text="${customer.name}" th:value="${customer.customerId}"></option>
@@ -21,14 +21,6 @@
 <label class="m-t-20" for="dateExpense">Expense Date:</label>
 <div class="input-group">
 <input type="text" id="dateExpense" name="dateExpense" placeholder="yyyy-MM-dd" class="form-control" />
-</div>
-
-<!-- Budget Dropdown -->
-<label class="m-t-20" for="budget">Budget: <span class="font-weight-bold" id="limitation"></span></label>
-<div class="input-group">
-<select name="budgetId" id="budget" class="form-control">
-    <option value="">Select customer's budget</option>
-</select>
 </div>
 
 <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">

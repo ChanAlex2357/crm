@@ -40,8 +40,8 @@ public class Ticket {
     @JoinColumn(name = "employee_id")
     private User employee;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_id" , nullable = false)
     private Customer customer;
 
     @Column(name = "created_at")

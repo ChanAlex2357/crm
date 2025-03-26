@@ -1,6 +1,7 @@
 package site.easy.to.build.crm.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,13 +13,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.transaction.Transactional;
 import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.entity.Customer;
+import site.easy.to.build.crm.entity.Expense;
+import site.easy.to.build.crm.entity.User;
 import site.easy.to.build.crm.entity.csv.CrmFiles;
 import site.easy.to.build.crm.entity.csv.results.ImportFileCsvResult;
 import site.easy.to.build.crm.entity.csv.results.ImportMapFilesCsvResult;
 import site.easy.to.build.crm.service.budget.BudgetService;
 import site.easy.to.build.crm.service.csv.importer.BudgetImportService;
 import site.easy.to.build.crm.service.csv.importer.CustomerImportService;
+import site.easy.to.build.crm.service.csv.importer.ExpenseImportService;
 import site.easy.to.build.crm.service.customer.CustomerService;
+import site.easy.to.build.crm.service.expense.ExpenseService;
+import site.easy.to.build.crm.service.user.UserService;
+import site.easy.to.build.crm.util.AuthenticationUtils;
 
 
 @Controller
@@ -26,6 +33,10 @@ import site.easy.to.build.crm.service.customer.CustomerService;
 @Transactional  
 public class ImportController {
 
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private AuthenticationUtils authenticationUtils;
     @Autowired
     private CustomerImportService customerImportService;
 
@@ -37,6 +48,11 @@ public class ImportController {
     @Autowired
     private CustomerService customerService;
 
+    @Autowired
+    private ExpenseImportService expenseImportService;
+
+    @Autowired
+    private ExpenseService expenseService;
     @GetMapping
     public String importForm(Model model,RedirectAttributes redirectAttributes) {
         model.addAttribute("importData",new CrmFiles());
@@ -46,29 +62,40 @@ public class ImportController {
 
     @PostMapping
     @Transactional
-    public String postMethodName(@ModelAttribute CrmFiles formData,RedirectAttributes redirectAttributes) {
+    public String postMethodName(@ModelAttribute CrmFiles formData,RedirectAttributes redirectAttributes,Authentication authentication) {
+        int userId = authenticationUtils.getLoggedInUserId(authentication);
+        User manager = userService.findById(userId);
         ImportMapFilesCsvResult importResults =  new ImportMapFilesCsvResult();
         try {
             // Importation des customers
             ImportFileCsvResult<Customer> customerResult = customerImportService.importData(formData.getCustomerFile());
             importResults.addImportFileCsvResult(customerResult);
     
-            // Persistance de de chaque ligne de donnee
-            customerService.saveAll(customerResult.getData());
+            try {
+                customerService.saveAll(customerResult.getData(),manager);
+            } catch (Exception e) {
+
+            }
+                // Persistance de de chaque ligne de donnee
             // Importation de budgets
             ImportFileCsvResult<Budget> budgetResult = budgetImportService.importData(formData.getBudgetFile());
             importResults.addImportFileCsvResult(budgetResult);
     
-            if (importResults.hasErrors()) {
-                redirectAttributes.addFlashAttribute("importErrors",importResults.getErrorHtml());
-                return "redirect:/employee/import";
-            }
             // Persistance de budget
             budgetService.saveAll(budgetResult.getData());
+    
+
+            ImportFileCsvResult<Expense> expenResult = expenseImportService.importData(formData.getExpenseFile());
+            importResults.addImportFileCsvResult(expenResult);
+
+            if (!importResults.hasErrors()) {
+                expenseService.saveAll(expenResult.getData(),manager,expenResult.getExceptions());
+            }else {throw new Exception();}
+            
             
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("importErrors",e.getMessage());
+            redirectAttributes.addFlashAttribute("importErrors",importResults.getErrorHtml());
             return "redirect:/employee/import";
         }
         redirectAttributes.addFlashAttribute("importMessage","Donnee importer avec success");

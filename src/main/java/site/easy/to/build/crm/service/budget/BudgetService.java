@@ -21,6 +21,9 @@ public class BudgetService {
     // Create a new Budget
     @Transactional
     public Budget createBudget(Budget budget) {
+        if (budget.getCreatedAt() == null) {
+            budget.setCreatedAt(LocalDateTime.now());
+        }
         return budgetRepository.save(budget);
     }
     

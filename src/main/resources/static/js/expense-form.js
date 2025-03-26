@@ -1,12 +1,12 @@
 
     console.info(expenseSettings)
-    var budget = {'amount':10000};
+    var budget = {reste:10000};
     var budgets = []
     
     function checkExpenseAmount(amount) {
         const confirmations = [];
 
-        const tauxAmount = (budget.amount * expenseSettings.taux) / 100
+        const tauxAmount = (budget.reste * expenseSettings.taux) / 100
         console.log("taux :: ");
         console.log(tauxAmount);
         if (amount >= tauxAmount) {
@@ -17,14 +17,6 @@
         }
         return confirmations;
     }
-
-    document.getElementById('budget').addEventListener('change' , function(event) {
-        const selectedValue = event.target.value;
-        budget = budgets.find(budget => budget.budgetId === parseInt(selectedValue));
-        
-        const limitationLabel = document.getElementById('limitation');
-        limitationLabel.innerHTML = ''+budget.reste
-    })
 
     document.getElementById('expense-form').addEventListener('submit', function(event) {
         event.preventDefault();
@@ -57,14 +49,8 @@
 function renderBudgets(){
     var budgetSelect = document.getElementById("budget");
     // clear current options
-    budgetSelect.innerHTML = "<option>Select customer's budget</option>";
+    budgetSelect.innerHTML = ""+budget.reste;
     // add new options from the response
-    budgets.forEach(function(budget) {
-        var option = document.createElement("option");
-        option.value = budget.budgetId;
-        option.text = budget.description;
-        budgetSelect.appendChild(option);
-    });
 }
 // Dynamic Budget Data
 document.getElementById("customerId").addEventListener("change", function() {
@@ -76,7 +62,7 @@ document.getElementById("customerId").addEventListener("change", function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             var response = JSON.parse(xhr.responseText);
             if (xhr.status === 200) {
-                budgets = response.data;
+                budget = response.data;
                 renderBudgets()
             } else {
                 console.error("Failed to load budgets: " + xhr.status);

@@ -79,21 +79,23 @@ CREATE TABLE expense_settings(
 -- ) as be ON bu.budget_id = be.budget_id;
 
 CREATE or REPLACE VIEW  v_etat_budget AS
-SELECT c.customer_id,SUM(bu.amount) as entree , SUM(ce.amount) as sortie ,SUM(bu.amount) - SUM(ce.amount) as reste
+SELECT c.customer_id,COALESCE(SUM(bu.amount),0) as entree , COALESCE(SUM(ce.amount),0) as sortie ,COALESCE(SUM(bu.amount),0) - COALESCE(SUM(ce.amount),0)  as reste
 FROM customer c
-JOIn customer_budget bu ON c.customer_id = bu.customer_id
-JOIN customer_expense ce on c.customer_id = ce.customer_id
+LEFT JOIN customer_budget bu ON c.customer_id = bu.customer_id
+LEFT JOIN customer_expense ce on c.customer_id = ce.customer_id
 GROUP BY c.customer_id;
+
+CREATE or REPLACE VIEW  v_etat_budget_cpl AS
+SELECT
+    vb.*,c.name
+JOIN customer c ON vb.customer_id = c.customer_id
+FROM v_etat_budget vb
 
 CREATE OR REPLACE VIEW customer_expense_cpl AS
 SELECT 
     ce.expense_id,
     ce.date_expense,
     ce.amount,
-    ce.created_at,
-    ce.updated_at,
-    ce.lead,
-    ce.ticket,
     -- Customer information
     c.customer_id,
     c.name as customer_name,
@@ -106,23 +108,12 @@ SELECT
     t.ticket_id,
     t.subject as ticket_subject,
     t.status as ticket_status,
-    t.priority as ticket_priority,
-    -- Budget information
-    cb.b
-    cb.amount as budget_amount,
-    cb.start_date as budget_start_date,
-    cb.end_date as budget_end_date,
-    -- Currency information
-    cur.id as currency_id,
-    cur.libelle as currency_name,
-    cur.val as currency_value,
-FROM 
-    customer_expense ce
+    t.priority as ticket_priority
+
+    from customer_expense ce
     LEFT JOIN customer c ON ce.customer_id = c.customer_id
     LEFT JOIN trigger_lead l ON ce.lead_id = l.lead_id
     LEFT JOIN trigger_ticket t ON ce.ticket_id = t.ticket_id
-    LEFT JOIN customer_budget cb ON ce.budget_id = cb.budget_id
-    LEFT JOIN currency cur ON cb.currency = cur.id;
 
 CREATE OR REPLACE VIEW lead_cpl AS
 SELECT 

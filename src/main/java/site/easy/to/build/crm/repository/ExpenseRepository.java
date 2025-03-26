@@ -50,4 +50,5 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
 
     List<Expense> findByLeadLeadId(int leadId);
     List<Expense> findByTicketTicketId(int ticketId);
+
 }

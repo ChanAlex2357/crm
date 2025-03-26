@@ -17,14 +17,19 @@ import site.easy.to.build.crm.entity.Expense;
 import site.easy.to.build.crm.entity.Lead;
 import site.easy.to.build.crm.entity.Ticket;
 import site.easy.to.build.crm.entity.User;
+import site.easy.to.build.crm.entity.dto.ExpenseTotalDTO;
+import site.easy.to.build.crm.entity.dto.LeadDTO;
 import site.easy.to.build.crm.exception.AdminImportException;
 import site.easy.to.build.crm.exception.ImportException;
 import site.easy.to.build.crm.repository.ExpenseRepository;
+import site.easy.to.build.crm.repository.LeadRepository;
 import site.easy.to.build.crm.service.lead.LeadService;
 import site.easy.to.build.crm.service.ticket.TicketService;
 
 @Service
 public class ExpenseService {
+
+    private final LeadRepository leadRepository;
 
     @Autowired
     private ExpenseSettingsService expenseSettingsService;
@@ -40,6 +45,11 @@ public class ExpenseService {
     
     @Autowired
     private TicketService ticketService;
+
+
+    ExpenseService(LeadRepository leadRepository) {
+        this.leadRepository = leadRepository;
+    }
 
     
     @Transactional
@@ -60,11 +70,6 @@ public class ExpenseService {
     public void deleteExpense(int id) {
         if(!expenseRepository.existsById(id)){
             throw new RuntimeException("Expense not found with id: " + id);
-        }
-        Expense e= getExpenseById(id);
-        List<ExpenseAlert> alerts = e.getAlerts();
-        for (ExpenseAlert alert : alerts) {
-            expenseAlertService.deleteExpenseAlert(alert.getAlertId());
         }
         expenseRepository.deleteById(id);
     }
@@ -146,6 +151,33 @@ public class ExpenseService {
                 importException.getImportException(line).addError(e.getMessage());
             }
         }
+    }
+
+    @Transactional
+    public void deleteExpenseOf(Lead lead) {
+        List<Expense> expenses = expenseRepository.findByLeadLeadId(lead.getLeadId());
+        if (expenses.isEmpty()) {
+            return;
+        }
+        deleteExpense(expenses.get(0).getExpenseId());
+    }
+
+    @Transactional
+    public void deleteExpenseOf(Ticket ticket) {
+        List<Expense> expenses = expenseRepository.findByTicketTicketId(ticket.getTicketId());
+        if (expenses.isEmpty()) {
+            return;
+        }
+        deleteExpense(expenses.get(0).getExpenseId());
+    }
+
+    public List<Expense> getExpenseByLead(int leadId) {
+        return expenseRepository.findByLeadLeadId(leadId);
+    }
+
+
+    public List<ExpenseTotalDTO> getAllExpensesWithDetails() {
+        return expenseRepository.findAllExpensesWithDetails();
     }
 }
 

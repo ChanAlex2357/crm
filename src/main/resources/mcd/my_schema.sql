@@ -69,14 +69,21 @@ CREATE TABLE expense_settings(
    PRIMARY KEY(id)
 );
 
+-- CREATE or REPLACE VIEW  v_etat_budget AS
+-- SELECT bu.budget_id,bu.amount,be.expense, (bu.amount - be.expense) as reste
+-- FROM customer_budget bu 
+-- JOIN (
+--    SELECT budget_id,SUM(amount) as expense
+--    FROM customer_expense ce
+--    GROUP BY ce.budget_id
+-- ) as be ON bu.budget_id = be.budget_id;
+
 CREATE or REPLACE VIEW  v_etat_budget AS
-SELECT bu.budget_id,bu.amount,be.expense, (bu.amount - be.expense) as reste
-FROM customer_budget bu 
-JOIN (
-   SELECT budget_id,SUM(amount) as expense
-   FROM customer_expense ce
-   GROUP BY ce.budget_id
-) as be ON bu.budget_id = be.budget_id;
+SELECT c.customer_id,SUM(bu.amount) as entree , SUM(ce.amount) as sortie ,SUM(bu.amount) - SUM(ce.amount) as reste
+FROM customer c
+JOIn customer_budget bu ON c.customer_id = bu.customer_id
+JOIN customer_expense ce on c.customer_id = ce.customer_id
+GROUP BY c.customer_id;
 
 CREATE OR REPLACE VIEW customer_expense_cpl AS
 SELECT 

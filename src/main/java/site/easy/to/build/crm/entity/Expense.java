@@ -51,11 +51,6 @@ public class Expense {
     @JoinColumn(name = "lead_id")
     private Lead lead;
 
-    @OneToMany
-    @JoinColumn(name = "expense_id",nullable = true)
-    private List<ExpenseAlert> alerts;
-
-
     public double getDoubleAmount() {
         return amount.doubleValue();
     }

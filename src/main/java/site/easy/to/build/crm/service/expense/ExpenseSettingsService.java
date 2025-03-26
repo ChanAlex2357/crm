@@ -1,15 +1,14 @@
 package site.easy.to.build.crm.service.expense;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
-import site.easy.to.build.crm.entity.Budget;
 import site.easy.to.build.crm.entity.Expense;
+import site.easy.to.build.crm.entity.api.request.ConfigTauxRequest;
 import site.easy.to.build.crm.entity.settings.ExpenseSettings;
 import site.easy.to.build.crm.repository.ExpenseSettingsRepository;
 

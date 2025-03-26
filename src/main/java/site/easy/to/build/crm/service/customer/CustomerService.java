@@ -3,6 +3,7 @@ package site.easy.to.build.crm.service.customer;
 
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.User;
+import site.easy.to.build.crm.exception.AdminImportException;
 
 import java.util.List;
 
@@ -33,6 +34,6 @@ public interface CustomerService {
     long countByUserId(int userId);
 
     public void saveAll(List<Customer> customers);
-    public void saveAll(List<Customer> customers,User manager);
+    public void saveAll(List<Customer> customers,User manager,AdminImportException importException);
 
 }

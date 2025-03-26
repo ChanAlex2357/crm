@@ -61,7 +61,8 @@ public class ExpenseImportService implements ICsvImporter<Expense, ExpenseMappin
         Customer customer = customerService.findByEmail(mapping.getCustomerEmail());
         if (customer != null) {
             entity.setCustomer(customer);
-            entity.setAmount(new BigDecimal(mapping.getExpense().replace(",", "")));
+            double amount = Double.parseDouble(mapping.getExpense().replace(",", ""));
+            entity.setAmount(new BigDecimal(amount));
             entity.setDateExpense(LocalDateTime.now().toLocalDate().toString());
 
             if (mapping.getType().toLowerCase().equals(TypeExpense.LEAD.getValue())) {
@@ -70,6 +71,7 @@ public class ExpenseImportService implements ICsvImporter<Expense, ExpenseMappin
                 lead.setStatus(mapping.getStatus());
                 lead.setCustomer(customer);
                 lead.setCreatedAt(LocalDateTime.now());
+                
                 entity.setLead(lead);
             }
             else if( mapping.getType().toLowerCase().equals(TypeExpense.TICKET.getValue())){ 
@@ -78,6 +80,7 @@ public class ExpenseImportService implements ICsvImporter<Expense, ExpenseMappin
                 ticket.setStatus(mapping.getStatus());
                 ticket.setCustomer(customer);
                 ticket.setCreatedAt(LocalDateTime.now());
+                ticket.setPriority("low");
                 entity.setTicket(ticket);
             }
             else {

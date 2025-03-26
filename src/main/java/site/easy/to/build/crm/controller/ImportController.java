@@ -19,6 +19,7 @@ import site.easy.to.build.crm.entity.csv.CrmFiles;
 import site.easy.to.build.crm.entity.csv.results.ImportFileCsvResult;
 import site.easy.to.build.crm.entity.csv.results.ImportMapFilesCsvResult;
 import site.easy.to.build.crm.service.budget.BudgetService;
+import site.easy.to.build.crm.service.csv.CrmImportService;
 import site.easy.to.build.crm.service.csv.importer.BudgetImportService;
 import site.easy.to.build.crm.service.csv.importer.CustomerImportService;
 import site.easy.to.build.crm.service.csv.importer.ExpenseImportService;
@@ -30,29 +31,17 @@ import site.easy.to.build.crm.util.AuthenticationUtils;
 
 @Controller
 @RequestMapping("/employee/import")
-@Transactional  
 public class ImportController {
 
     @Autowired
     private UserService userService;
     @Autowired
     private AuthenticationUtils authenticationUtils;
-    @Autowired
-    private CustomerImportService customerImportService;
 
     @Autowired
-    private BudgetImportService budgetImportService;
+    private CrmImportService importService;
 
-    @Autowired
-    private BudgetService budgetService;
-    @Autowired
-    private CustomerService customerService;
-
-    @Autowired
-    private ExpenseImportService expenseImportService;
-
-    @Autowired
-    private ExpenseService expenseService;
+    
     @GetMapping
     public String importForm(Model model,RedirectAttributes redirectAttributes) {
         model.addAttribute("importData",new CrmFiles());
@@ -61,41 +50,17 @@ public class ImportController {
     }
 
     @PostMapping
-    @Transactional
     public String postMethodName(@ModelAttribute CrmFiles formData,RedirectAttributes redirectAttributes,Authentication authentication) {
         int userId = authenticationUtils.getLoggedInUserId(authentication);
         User manager = userService.findById(userId);
         ImportMapFilesCsvResult importResults =  new ImportMapFilesCsvResult();
         try {
-            // Importation des customers
-            ImportFileCsvResult<Customer> customerResult = customerImportService.importData(formData.getCustomerFile());
-            importResults.addImportFileCsvResult(customerResult);
-    
-            try {
-                customerService.saveAll(customerResult.getData(),manager);
-            } catch (Exception e) {
-
+            if (formData.getSize() < 3) {
+                throw new RuntimeException("Aucune des 3 fichiers ne doivent etre vide");
             }
-                // Persistance de de chaque ligne de donnee
-            // Importation de budgets
-            ImportFileCsvResult<Budget> budgetResult = budgetImportService.importData(formData.getBudgetFile());
-            importResults.addImportFileCsvResult(budgetResult);
-    
-            // Persistance de budget
-            budgetService.saveAll(budgetResult.getData());
-    
-
-            ImportFileCsvResult<Expense> expenResult = expenseImportService.importData(formData.getExpenseFile());
-            importResults.addImportFileCsvResult(expenResult);
-
-            if (!importResults.hasErrors()) {
-                expenseService.saveAll(expenResult.getData(),manager,expenResult.getExceptions());
-            }else {throw new Exception();}
-            
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("importErrors",importResults.getErrorHtml());
+            importResults = importService.importData(formData,manager);
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("importErrors",e.getMessage());
             return "redirect:/employee/import";
         }
         redirectAttributes.addFlashAttribute("importMessage","Donnee importer avec success");

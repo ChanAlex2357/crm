@@ -77,12 +77,12 @@
                                     <input type="file" th:field="*{customerFile}" name="" id="customer" class="form-control">
                                 </div>
                                 <div class="col form-group mb-3">
-                                    <label for="customerData" class="form-label">Expenses file</label>
-                                    <input type="file" th:field="*{expenseFile}" name="" id="customerData" class="form-control">
-                                </div>
-                                <div class="col form-group mb-3">
                                     <label for="budget" class="form-label">Budget file</label>
                                     <input type="file" th:field="*{budgetFile}" name="" id="budget" class="form-control">
+                                </div>
+                                <div class="col form-group mb-3">
+                                    <label for="customerData" class="form-label">Expenses file</label>
+                                    <input type="file" th:field="*{expenseFile}" name="" id="customerData" class="form-control">
                                 </div>
                                 <div class="col mt-3">
                                     <button type="submit" class="btn btn-primary m-t-20">Importer</button>
@@ -101,7 +101,7 @@
             </div>
             <div class="row">
                 <div th:if="${importMessage != null}" class="card">
-                    <div class="card-body alert alert-danger" >
+                    <div class="card-body alert alert-success" >
                         <span class="" th:text="${importMessage}"></span>
                     </div>
                 </div>

@@ -12,6 +12,7 @@ import site.easy.to.build.crm.util.EmailTokenUtils;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.CustomerLoginInfo;
 import site.easy.to.build.crm.entity.User;
+import site.easy.to.build.crm.exception.AdminImportException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -110,10 +111,15 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void saveAll(List<Customer> customers, User manager) {
+    public void saveAll(List<Customer> customers, User manager , AdminImportException importException) {
+        int i = 1;
         for (Customer customer : customers) {
-            customer.setUser(manager);
-            createNewCustomer(customer);
+            try {
+                customer.setUser(manager);
+                createNewCustomer(customer);
+            } catch (Exception e) {
+                importException.getImportException(i).addError((e));
+            }
         }
     }
 }

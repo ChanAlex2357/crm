@@ -7,7 +7,6 @@ import com.opencsv.bean.CsvDate;
 
 import lombok.Getter;
 import site.easy.to.build.crm.entity.Lead;
-import site.easy.to.build.crm.entity.csv.CsvMapping;
 
 @Getter
 public class LeadMapping extends CsvMapping{
@@ -62,25 +61,4 @@ public class LeadMapping extends CsvMapping{
     @CsvBindByName(column = "created_at")
     @CsvDate("yyyy-MM-dd HH:mm:ss")
     private LocalDateTime  createdAt;
-
-
-    @Override
-    public Lead transfer() {
-        Lead lead = new Lead(
-            getName(),
-            getStatus(),
-            getPhone(),
-            getMeetingId(),
-            getGoogleDrive() == '1' ? Boolean.TRUE : Boolean.FALSE,
-            getGoogleDriveFolderId(),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            getCreatedAt()
-        );
-        return lead;
-    }
 }

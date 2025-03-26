@@ -16,6 +16,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     public Customer findByEmail(String email);
 
+    public Customer findByName(String name);
+
     public List<Customer> findAll();
 
     public List<Customer> findByUserIdOrderByCreatedAtDesc(int userId, Pageable pageable);

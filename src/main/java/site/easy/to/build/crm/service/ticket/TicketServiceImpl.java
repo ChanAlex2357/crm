@@ -9,6 +9,7 @@ import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.repository.TicketRepository;
 import site.easy.to.build.crm.service.expense.ExpenseService;
 import site.easy.to.build.crm.entity.Ticket;
+import site.easy.to.build.crm.entity.dto.LeadDTO;
 import site.easy.to.build.crm.entity.dto.TicketDTO;
 
 import java.util.List;
@@ -107,7 +108,8 @@ public class TicketServiceImpl implements TicketService{
     public List<TicketDTO> getAllTicketCpl(){
         return ticketRepository.findAllTicketsWithDetails();
     }
-    public TicketDTO getTicketCpl(int id){
-        return  ticketRepository.findTicketsWithDetails(id);
+
+    public LeadDTO getTicketCpl(int id){
+        return  ticketRepository.findAllTicketsWithDetails(id);
     }
 }

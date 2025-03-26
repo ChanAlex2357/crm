@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.Ticket;
+import site.easy.to.build.crm.entity.dto.LeadDTO;
 import site.easy.to.build.crm.entity.dto.TicketDTO;
 
 import java.util.List;
@@ -82,5 +83,30 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
             WHERE customer_id = :customerId
             """, nativeQuery = true)
     List<TicketDTO> findTicketsByCustomerId(Integer customerId);
+
+    @Query(value = """
+            SELECT 
+                t.ticket_id as ticketId,
+                t.subject as subject,
+                t.description as description,
+                t.status as ticketStatus,
+                t.priority as priority,
+                t.created_at as createdAt,
+                -- Customer information
+                c.customer_id as customerId,
+                c.name as customerName,
+                c.email as customerEmail,
+                -- Manager information
+                m.id as managerId,
+                m.username as managerUsername,
+                m.email as managerEmail,
+                -- Employee information
+                e.id as employeeId,
+                e.username as employeeUsername,
+                e.email as employeeEmail
+            FROM ticket_cpl t
+            WHERE ticketId = :id
+            """, nativeQuery = true)
+    public LeadDTO findAllTicketsWithDetails(int id);
 
 }
